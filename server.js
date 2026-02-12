@@ -59,14 +59,15 @@ app.post('/executar', async (req, res) => {
         await page.click('text=BRASIL');
         await page.waitForTimeout(500);
 
-        // CNPJ
+        // Dados cadastrais da empresa
         await page.fill('input[name="IdentificacionTributaria"]', empresa.cnpj || '');
-
-        // Nome da Empresa
         await page.fill('input[name="Nombre"]', empresa.nome_empresa || '');
+        await page.fill('input[name="CorreoElectronico"]', empresa.email || '');
+        await page.fill('input[name="TelefonoEmpresa"]', empresa.telefone || '');
+        await page.fill('input[name="Departamento"]', empresa.estado || '');
+        await page.fill('input[name="Ciudad"]', empresa.cidade || '');
 
         // Setor
-        console.log("Id setor: " + empresa.setor_negocios_id);
         if (empresa.setor_negocios_id) {
             const setorIndex = parseInt(empresa.setor_negocios_id, 10) - 1;
 
@@ -82,7 +83,6 @@ app.post('/executar', async (req, res) => {
         }
 
         // Tamanho
-        console.log("Id tamanho: " + empresa.tamanho_empresa_id);
         if (empresa.tamanho_empresa_id) {
             const tamanhoIndex = parseInt(empresa.tamanho_empresa_id, 10) - 1;
 
@@ -97,29 +97,14 @@ app.post('/executar', async (req, res) => {
             }
         }
 
-        // Email
-        await page.fill('input[name="CorreoElectronico"]', empresa.email || '');
-
-        // Telefone
-        await page.fill('input[name="TelefonoEmpresa"]', empresa.telefone || '');
-
-        // Estado
-        await page.fill('input[name="Departamento"]', empresa.estado || '');
-
-        // Cidade
-        await page.fill('input[name="Ciudad"]', empresa.cidade || '');
-
         // Nome do Representante
         const nomes = (empresa.nome_representante || '').split(' ');
         await page.fill('input[name="NombreRepresentante"]', nomes[0] || '');
         await page.fill('input[name="ApellidoRepresentante"]', nomes.slice(1).join(' ') || '');
 
         // Gênero
-        console.log("Id gênero: " + empresa.genero_representante_id);
         if (empresa.genero_representante_id) {
             const generoIndex = parseInt(empresa.genero_representante_id, 10) - 1;
-            //const generoIndex = empresa.genero_representante_id;
-            console.log("Índice gênero: " + generoIndex);
 
             if (generoIndex !== -1) {
                 await page.click('#LSexo');
@@ -133,10 +118,8 @@ app.post('/executar', async (req, res) => {
         }
 
         // Idade
-        console.log("Id gênero: " + empresa.idade_representante_id);
         if (empresa.idade_representante_id) {
             const idadeIndex = parseInt(empresa.idade_representante_id, 10) - 1;
-            console.log("Índice idade: " + idadeIndex);
             //const idadeIndex = empresa.idade_representante_id;
 
             if (idadeIndex !== -1) {
@@ -224,19 +207,15 @@ app.post('/executar', async (req, res) => {
         if (empresa.reutilizacao_materiais) {
             await page.fill('input[id*="Porcentaje8"]', String(empresa.reutilizacao_materiais));
         }
-
         if (empresa.reutilizacao_residuos) {
             await page.fill('input[id*="Porcentaje9"]', String(empresa.reutilizacao_residuos));
         }
-
         if (empresa.reciclagem_materia_prima) {
             await page.fill('input[id*="Porcentaje10"]', String(empresa.reciclagem_materia_prima));
         }
-
         if (empresa.reciclagem_materiais_residuais) {
             await page.fill('input[id*="Porcentaje11"]', String(empresa.reciclagem_materiais_residuais));
         }
-
         if (empresa.melhoria_processos_comerciais) {
             await page.fill('input[id*="Porcentaje12"]', String(empresa.melhoria_processos_comerciais));
         }
@@ -251,49 +230,81 @@ app.post('/executar', async (req, res) => {
                 "Investimento em infraestrutura sustentável": "Actividad5",
                 "Treinamento em produção sustentável": "Actividad6",
                 "Melhoria na comunicação com clientes": "Actividad7",
-                "Cumprimento de normas ecológicas": "Actividad8"
+                "Cumprimento de normas ecológicas": "Actividad8",
+                "Outro": "Actividad9"
             };
 
             for (const melhoria of empresa.melhorias_geradas) {
                 for (const [key, fieldId] of Object.entries(melhoriaMap)) {
                     if (melhoria.includes(key)) {
-                        const label = page.locator('label', { hasText: key });
-                        const checkboxId = await label.getAttribute('for');
-                        await page.locator(`#${checkboxId}`).click();
-                        await page.waitForTimeout(2000);
+                        // const label = page.locator('label', { hasText: key }).first();
+                        // const checkboxId = await label.getAttribute('for');
+                        // await page.locator(`#${checkboxId}`).click();
+                        await page.locator(`[id$="${fieldId}"]`).first().click();
+                        console.log(`Melhoria: ${melhoria}, campo=${fieldId}`)
+                        //id="dx_dx-ad19541e-87fe-b4df-4f7a-161fabcd4c49_Actividad9"
+                        //await page.locator('div', { hasText: fieldId }).first().click();
                     }
                 }
             }
+
+            if (empresa.detalhe_atividade) {
+                //const label = page.locator('label', { hasText: "Actividad9detalle" });
+                //const checkboxId = await label.getAttribute('for');
+                //await page.locator(`#${checkboxId}`).click();
+                await page.fill('input[id*="Actividad9detalle"]', String(empresa.detalhe_atividade));
+                //await page.locator('div', { hasText: "Actividad9detalle" }).first().click();
+            }
+
         }
 
         // Áreas de aplicação
         if (empresa.areas_aplicacao && empresa.areas_aplicacao.length > 0) {
             const areaMap = {
-                "Produção": "Produção:",
+                /*"Produção": "Produção:",
                 "Logística": "Logística:",
                 "Vendas": "Vendas - marketing:",
                 "Compras": "Compras - abastecimiento:",
                 "Finanças": "Finanças - contabilidade:",
                 "Distribuição": "Distribuição:",
                 "Talento": "Talento humano:",
-                "Outro": "Outro:"
+                "Outro:": "Outro:"*/
+                "Produção": "Area1",
+                "Logística": "Area2",
+                "Vendas": "Area3",
+                "Compras": "Area4",
+                "Finanças": "Area5",
+                "Distribuição": "Area6",
+                "Talento": "Area7",
+                "Outro": "Area8"
             };
 
             for (const area of empresa.areas_aplicacao) {
-                for (const [key, fieldLabel] of Object.entries(areaMap)) {
+                for (const [key, fieldId] of Object.entries(areaMap)) {
                     if (area.includes(key)) {
-                        const label = page.locator('label', { hasText: fieldLabel });
-                        const checkboxId = await label.getAttribute('for');
-                        await page.locator(`#${checkboxId}`).click();
-                        await page.waitForTimeout(300);
+                        //const label = page.locator('label', { hasText: fieldLabel }).first();
+                        //const checkboxId = await label.getAttribute('for');
+                        //await page.locator(`#${checkboxId}`).click();
+                        await page.locator(`[id$="${fieldId}"]`).first().click();
+                        // await page.locator('div', { hasText: fieldId }).first().click();
                     }
                 }
             }
+
+            if (empresa.detalhe_area) {
+                //const label = page.locator('label', { hasText: "Area8detalle" });
+                //const checkboxId = await label.getAttribute('for');
+                //await page.locator(`#${checkboxId}`).click();
+                await page.fill('input[id*="Area8detalle"]', String(empresa.detalhe_area));
+                //await page.locator('div', { hasText: "ActividaArea8detalle" }).first().click();
+            }
+
         }
 
         // Data de adoção
         if (empresa.data_adocao_praticas) {
-            await page.fill('input[id*="ActividadFecha"]', empresa.data_adocao_praticas);
+            const dataFormatada = new Date(empresa.data_adocao_praticas).toLocaleDateString('pt-BR');
+            await page.fill('input[id*="ActividadFecha"]', dataFormatada);
         }
 
         // Assinatura
@@ -303,14 +314,21 @@ app.post('/executar', async (req, res) => {
         if (empresa.cargo_representante) {
             await page.fill('input[id*="FirmaCargo"]', empresa.cargo_representante);
         }
+
         if (empresa.assinatura_data) {
-            const dataAssinatura = new Date(empresa.assinatura_data).toISOString().split('T')[0];
-            await page.fill('input[id*="FirmaFecha"]', dataAssinatura);
+            const dataFormatada = new Date(empresa.assinatura_data).toLocaleDateString('pt-BR');
+            await page.fill('input[id*="FirmaFecha"]', dataFormatada);
         }
+
+        /* await new Promise(resolve => {
+             process.stdin.resume();
+             process.stdin.once('data', resolve);
+         });*/
+
 
         // 10. SALVAR
         console.log('Salvando questionário...');
-        await page.click('button:has-text("Salvar")');
+        await page.locator('.dx-button').filter({ hasText: 'Salvar' }).click();
         await page.waitForTimeout(2000);
 
         console.log('Automação concluída com sucesso!');
