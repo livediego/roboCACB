@@ -220,9 +220,9 @@ app.post('/executar', async (req, res) => {
             await page.fill('input[id*="Porcentaje12"]', String(empresa.melhoria_processos_comerciais));
         }
 
-        // Melhorias geradas
-        if (empresa.melhorias_geradas && empresa.melhorias_geradas.length > 0) {
-            const melhoriaMap = {
+        // Atividades geradas
+        if (empresa.atividades_geradas && empresa.atividades_geradas.length > 0) {
+            const atividadesMap = {
                 "Redesenho de produtos": "Actividad1",
                 "Redesenho de embalagens": "Actividad2",
                 "Investimento em maquinário eficiente": "Actividad3",
@@ -234,14 +234,14 @@ app.post('/executar', async (req, res) => {
                 "Outro": "Actividad9"
             };
 
-            for (const melhoria of empresa.melhorias_geradas) {
-                for (const [key, fieldId] of Object.entries(melhoriaMap)) {
-                    if (melhoria.includes(key)) {
+            for (const atividade of empresa.atividades_geradas) {
+                for (const [key, fieldId] of Object.entries(atividadesMap)) {
+                    if (atividade.includes(key)) {
                         // const label = page.locator('label', { hasText: key }).first();
                         // const checkboxId = await label.getAttribute('for');
                         // await page.locator(`#${checkboxId}`).click();
                         await page.locator(`[id$="${fieldId}"]`).first().click();
-                        console.log(`Melhoria: ${melhoria}, campo=${fieldId}`)
+                        console.log(`Atividade: ${atividade}, campo=${fieldId}`)
                         //id="dx_dx-ad19541e-87fe-b4df-4f7a-161fabcd4c49_Actividad9"
                         //await page.locator('div', { hasText: fieldId }).first().click();
                     }
