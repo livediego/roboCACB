@@ -8,7 +8,7 @@ app.post('/executar', async (req, res) => {
     let browser;
 
     try {
-        const { empresa, credenciais, questionario } = req.body;
+        const { empresa, credenciais, questionario, isProd } = req.body;
 
         if (!empresa || !credenciais) {
             return res.status(400).json({ error: 'Dados incompletos' });
@@ -22,7 +22,7 @@ app.post('/executar', async (req, res) => {
 
         // Iniciar navegador
         browser = await chromium.launch({
-            headless: false,
+            headless: isProd, // Não abre a janela em ambiente de produção
             args: ['--no-sandbox', '--disable-setuid-sandbox']
         });
 
