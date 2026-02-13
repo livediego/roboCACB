@@ -17,7 +17,7 @@ app.post('/executar', async (req, res) => {
     try {
 
         const timeout1 = 200;
-        const timeout2 = 1000;
+        const timeout2 = 2000;
 
         const { empresa, credenciais, questionario, isProd } = req.body;
 
@@ -61,16 +61,16 @@ app.post('/executar', async (req, res) => {
         // 3. CLICAR NO BOTÃO "+"
         console.log('Clicando no botão +...');
         await page.click("//i[@class='dx-icon dx-icon-add']");
-        await page.waitForTimeout(timeout2);
+        await page.waitForTimeout(2000);
 
         // 4. PREENCHER FORMULÁRIO DE CADASTRO DA EMPRESA
         console.log('Preenchendo formulário de cadastro...');
 
         // País: Brasil
         await page.click('#LPais');
-        await page.waitForTimeout(timeout1);
+        await page.waitForTimeout(500);
         await page.click('text=BRASIL');
-        await page.waitForTimeout(timeout1);
+        await page.waitForTimeout(500);
 
         // Dados cadastrais da empresa
         await page.fill('input[name="IdentificacionTributaria"]', empresa.cnpj || '');
@@ -86,12 +86,12 @@ app.post('/executar', async (req, res) => {
 
             if (setorIndex !== -1) {
                 await page.click('#LSector');
-                await page.waitForTimeout(timeout1);
+                await page.waitForTimeout(500);
                 const combo = page.locator('.dx-dropdowneditor-overlay:visible');
                 await combo.waitFor();
                 const opcoes = combo.locator('.dx-item.dx-list-item[role="option"]');
                 await opcoes.nth(setorIndex).click();
-                await page.waitForTimeout(timeout1);
+                await page.waitForTimeout(500);
             }
         }
 
@@ -101,12 +101,12 @@ app.post('/executar', async (req, res) => {
 
             if (tamanhoIndex !== -1) {
                 await page.click('#LTamanio');
-                await page.waitForTimeout(timeout1);
+                await page.waitForTimeout(500);
                 const combo = page.locator('.dx-dropdowneditor-overlay:visible');
                 await combo.waitFor();
                 const opcoes = combo.locator('.dx-item.dx-list-item[role="option"]');
                 await opcoes.nth(tamanhoIndex).click();
-                await page.waitForTimeout(timeout1);
+                await page.waitForTimeout(500);
             }
         }
 
@@ -121,12 +121,12 @@ app.post('/executar', async (req, res) => {
 
             if (generoIndex !== -1) {
                 await page.click('#LSexo');
-                await page.waitForTimeout(timeout1);
+                await page.waitForTimeout(500);
                 const combo = page.locator('.dx-dropdowneditor-overlay:visible');
                 await combo.waitFor();
                 const opcoes = combo.locator('.dx-item.dx-list-item[role="option"]');
                 await opcoes.nth(generoIndex).click();
-                await page.waitForTimeout(timeout1);
+                await page.waitForTimeout(500);
             }
         }
 
@@ -137,12 +137,12 @@ app.post('/executar', async (req, res) => {
 
             if (idadeIndex !== -1) {
                 await page.click('#LEdad');
-                await page.waitForTimeout(timeout1);
+                await page.waitForTimeout(500);
                 const combo = page.locator('.dx-dropdowneditor-overlay:visible');
                 await combo.waitFor();
                 const opcoes = combo.locator('.dx-item.dx-list-item[role="option"]');
                 await opcoes.nth(idadeIndex).click();
-                await page.waitForTimeout(timeout1);
+                await page.waitForTimeout(500);
             }
         }
 
@@ -155,13 +155,13 @@ app.post('/executar', async (req, res) => {
         // 5. SALVAR
         console.log('Salvando cadastro da empresa...');
         await page.locator('.dx-button').filter({ hasText: 'Guardar' }).click();
-        await page.waitForTimeout(timeout2);
+        await page.waitForTimeout(6000);
 
         // 6. NAVEGAR PARA ÚLTIMA PÁGINA
         console.log('Navegando para a última página...');
         const lastPageButton = page.locator('.dx-page-indexes .dx-page').last();
         await lastPageButton.click();
-        await page.waitForTimeout(timeout2);
+        await page.waitForTimeout(2000);
 
         // 7. CLICAR NA EMPRESA
         //console.log('Clicando na empresa adicionada...');
@@ -179,7 +179,7 @@ app.post('/executar', async (req, res) => {
             .locator('a.dx-link.dx-link-edit.dx-icon-edit')
             .click();
 
-        await page.waitForTimeout(timeout2);
+        await page.waitForTimeout(2000);
 
         // 9. PREENCHER QUESTIONÁRIO INTERNO
         console.log('Preenchendo questionário interno...');
@@ -237,12 +237,12 @@ app.post('/executar', async (req, res) => {
         if (empresa.atividades_geradas && empresa.atividades_geradas.length > 0) {
             const atividadesMap = {
                 "Redesenho de produtos": "Actividad1",
-                "Redesenho de etiquetas": "Actividad2",
-                "maquinário mais eficiente": "Actividad3",
-                "fontes de energia mais eficientes": "Actividad4",
-                "infraestrutura mais eficiente": "Actividad5",
-                "treinamento": "Actividad6",
-                "comunicação com os clientes": "Actividad7",
+                "Redesenho de embalagens": "Actividad2",
+                "Investimento em maquinário eficiente": "Actividad3",
+                "Investimento em energia renovável": "Actividad4",
+                "Investimento em infraestrutura sustentável": "Actividad5",
+                "Treinamento em produção sustentável": "Actividad6",
+                "Melhoria na comunicação com clientes": "Actividad7",
                 "Cumprimento de normas ecológicas": "Actividad8",
                 "Outro": "Actividad9"
             };
@@ -250,14 +250,23 @@ app.post('/executar', async (req, res) => {
             for (const atividade of empresa.atividades_geradas) {
                 for (const [key, fieldId] of Object.entries(atividadesMap)) {
                     if (atividade.includes(key)) {
+                        // const label = page.locator('label', { hasText: key }).first();
+                        // const checkboxId = await label.getAttribute('for');
+                        // await page.locator(`#${checkboxId}`).click();
                         await page.locator(`[id$="${fieldId}"]`).first().click();
                         console.log(`Atividade: ${atividade}, campo=${fieldId}`)
+                        //id="dx_dx-ad19541e-87fe-b4df-4f7a-161fabcd4c49_Actividad9"
+                        //await page.locator('div', { hasText: fieldId }).first().click();
                     }
                 }
             }
 
             if (empresa.detalhe_atividade) {
+                //const label = page.locator('label', { hasText: "Actividad9detalle" });
+                //const checkboxId = await label.getAttribute('for');
+                //await page.locator(`#${checkboxId}`).click();
                 await page.fill('input[id*="Actividad9detalle"]', String(empresa.detalhe_atividade));
+                //await page.locator('div', { hasText: "Actividad9detalle" }).first().click();
             }
 
         }
@@ -265,6 +274,14 @@ app.post('/executar', async (req, res) => {
         // Áreas de aplicação
         if (empresa.areas_aplicacao && empresa.areas_aplicacao.length > 0) {
             const areaMap = {
+                /*"Produção": "Produção:",
+                "Logística": "Logística:",
+                "Vendas": "Vendas - marketing:",
+                "Compras": "Compras - abastecimiento:",
+                "Finanças": "Finanças - contabilidade:",
+                "Distribuição": "Distribuição:",
+                "Talento": "Talento humano:",
+                "Outro:": "Outro:"*/
                 "Produção": "Area1",
                 "Logística": "Area2",
                 "Vendas": "Area3",
@@ -278,13 +295,21 @@ app.post('/executar', async (req, res) => {
             for (const area of empresa.areas_aplicacao) {
                 for (const [key, fieldId] of Object.entries(areaMap)) {
                     if (area.includes(key)) {
+                        //const label = page.locator('label', { hasText: fieldLabel }).first();
+                        //const checkboxId = await label.getAttribute('for');
+                        //await page.locator(`#${checkboxId}`).click();
                         await page.locator(`[id$="${fieldId}"]`).first().click();
+                        // await page.locator('div', { hasText: fieldId }).first().click();
                     }
                 }
             }
 
             if (empresa.detalhe_area) {
+                //const label = page.locator('label', { hasText: "Area8detalle" });
+                //const checkboxId = await label.getAttribute('for');
+                //await page.locator(`#${checkboxId}`).click();
                 await page.fill('input[id*="Area8detalle"]', String(empresa.detalhe_area));
+                //await page.locator('div', { hasText: "ActividaArea8detalle" }).first().click();
             }
 
         }
@@ -317,22 +342,9 @@ app.post('/executar', async (req, res) => {
         // 10. SALVAR
         console.log('Salvando questionário...');
         await page.locator('.dx-button').filter({ hasText: 'Salvar' }).click();
-        await page.waitForTimeout(timeout2);
+        await page.waitForTimeout(2000);
 
         console.log('Automação concluída com sucesso!');
-
-        const fimExecucao = new Date();
-        const fimTimestamp = Date.now();
-        const duracaoMs = fimTimestamp - inicioTimestamp;
-
-        const minutos = Math.floor(duracaoMs / 60000);
-        const segundos = Math.floor((duracaoMs % 60000) / 1000);
-
-        console.log('==============================================');
-        console.log(`✅ Fim da execução: ${fimExecucao.toLocaleString('pt-BR')}`);
-        console.log(`⏱ Duração total: ${duracaoMs} ms (${minutos}m ${segundos}s)`);
-        console.log('==============================================');
-
 
         res.json({
             success: true,
@@ -342,18 +354,6 @@ app.post('/executar', async (req, res) => {
 
     } catch (error) {
         console.error('Erro na automação:', error);
-
-        const fimExecucao = new Date();
-        const fimTimestamp = Date.now();
-        const duracaoMs = fimTimestamp - inicioTimestamp;
-
-        console.log('==============================================');
-        console.log(`❌ Execução finalizada com erro`);
-        console.log(`⏰ Fim: ${fimExecucao.toLocaleString('pt-BR')}`);
-        console.log(`⏱ Duração até erro: ${duracaoMs} ms`);
-        console.log('==============================================');
-
-
         res.status(500).json({
             error: error.message,
             stack: error.stack
