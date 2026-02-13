@@ -1,69 +1,67 @@
 const express = require('express');
 const { chromium } = require('playwright');
+const { v4: uuidv4 } = require('uuid');
 
 const app = express();
 app.use(express.json({ limit: '10mb' }));
 
-app.post('/executar', async (req, res) => {
-    let browser;
+const jobs = {};
 
-    const inicioExecucao = new Date();
-    const inicioTimestamp = Date.now();
 
-    console.log('==============================================');
-    console.log(`⏰ Início da execução: ${inicioExecucao.toLocaleString('pt-BR')}`);
-    console.log('==============================================');
+// ======================================================
+// 🔹 1. CRIAR BROWSER
+// ======================================================
+
+async function criarBrowser(isProd) {
+    return await chromium.launch({
+        headless: isProd,
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+    });
+}
+
+
+// ======================================================
+// 🔹 2. LOGIN
+// ======================================================
+
+async function fazerLogin(page, credenciais) {
+
+    console.log("🔐 Fazendo login...");
+
+    await page.goto('https://www.alinvestverde-c1-monitoreo.com/Admin/Login?ReturnUrl=%2FHome');
+    await page.fill("//input[@id='UsuarioNombre']", credenciais.username);
+    await page.fill("//input[@id='Contrasenia']", credenciais.password);
+    await page.click("//button[normalize-space()='Ingresar']");
+
+    await page.waitForLoadState('networkidle');
+
+    console.log("✅ Login realizado");
+}
+
+
+// ======================================================
+// 🔹 3. EXECUTAR UMA EMPRESA (FUNÇÃO REUTILIZÁVEL)
+// ======================================================
+
+async function executarEmpresa(page, empresa) {
+
+    const inicio = Date.now();
 
     try {
 
-        const timeout1 = 200;
-        const timeout2 = 1000;
+        console.log(`🏢 Processando: ${empresa.nome_empresa}`);
 
-        const { empresa, credenciais, questionario, isProd } = req.body;
-
-        if (!empresa || !credenciais) {
-            return res.status(400).json({ error: 'Dados incompletos' });
-        }
-
-        /*console.log('================ EMPRESA (RAW) ================');
-        console.dir(empresa, { depth: null });
-        console.log('==============================================');*/
-
-        console.log(`Iniciando automação para: ${empresa.nome_empresa}`);
-        console.log(`Produção ? ${isProd}`);
-
-
-        // Iniciar navegador
-        browser = await chromium.launch({
-            headless: isProd, // Não abre a janela em ambiente de produção
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
-        });
-
-        const context = await browser.newContext({
-            userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-        });
-
-        const page = await context.newPage();
-
-        // 1. LOGIN
-        console.log('Fazendo login...');
-        await page.goto('https://www.alinvestverde-c1-monitoreo.com/Admin/Login?ReturnUrl=%2FHome');
-        await page.fill("//input[@id='UsuarioNombre']", credenciais.username);
-        await page.fill("//input[@id='Contrasenia']", credenciais.password);
-        await page.click("//button[normalize-space()='Ingresar']");
-        await page.waitForLoadState('networkidle');
-
-        // 2. NAVEGAR PARA O QUESTIONÁRIO 11OE
+        // 1. NAVEGAR PARA O QUESTIONÁRIO 11OE
         console.log('Navegando para o questionário...');
         await page.goto('https://www.alinvestverde-c1-monitoreo.com/Ficha11OE?IdProyectoIndicadorML=291');
         await page.waitForLoadState('networkidle');
 
-        // 3. CLICAR NO BOTÃO "+"
+        // 2. CLICAR NO BOTÃO "+"
         console.log('Clicando no botão +...');
         await page.click("//i[@class='dx-icon dx-icon-add']");
         await page.waitForTimeout(timeout2);
 
-        // 4. PREENCHER FORMULÁRIO DE CADASTRO DA EMPRESA
+        // 3. PREENCHER FORMULÁRIO DE CADASTRO DA EMPRESA
         console.log('Preenchendo formulário de cadastro...');
 
         // País: Brasil
@@ -146,29 +144,18 @@ app.post('/executar', async (req, res) => {
             }
         }
 
-        //await new Promise(resolve => {
-        //   process.stdin.resume();
-        //    process.stdin.once('data', resolve);
-        //});
-
-
-        // 5. SALVAR
+        // 4. SALVAR
         console.log('Salvando cadastro da empresa...');
         await page.locator('.dx-button').filter({ hasText: 'Guardar' }).click();
         await page.waitForTimeout(timeout2);
 
-        // 6. NAVEGAR PARA ÚLTIMA PÁGINA
+        // 5. NAVEGAR PARA ÚLTIMA PÁGINA
         console.log('Navegando para a última página...');
         const lastPageButton = page.locator('.dx-page-indexes .dx-page').last();
         await lastPageButton.click();
         await page.waitForTimeout(timeout2);
 
-        // 7. CLICAR NA EMPRESA
-        //console.log('Clicando na empresa adicionada...');
-        //await page.click(`text=${empresa.nome_empresa}`);
-        //await page.waitForTimeout(1000);
-
-        // 8. EDITAR
+        // 6. EDITAR
         console.log('Clicando em Editar...');
         //await page.getByLabel('Editar').last().click();
         const linhaEmpresa = page.locator('.dx-data-row', {
@@ -181,7 +168,7 @@ app.post('/executar', async (req, res) => {
 
         await page.waitForTimeout(timeout2);
 
-        // 9. PREENCHER QUESTIONÁRIO INTERNO
+        // 7. PREENCHER QUESTIONÁRIO INTERNO
         console.log('Preenchendo questionário interno...');
 
         // Descrição das práticas
@@ -308,64 +295,176 @@ app.post('/executar', async (req, res) => {
             await page.fill('input[id*="FirmaFecha"]', dataFormatada);
         }
 
-        /* await new Promise(resolve => {
-             process.stdin.resume();
-             process.stdin.once('data', resolve);
-         });*/
-
-
-        // 10. SALVAR
+        // 8. SALVAR
         console.log('Salvando questionário...');
         await page.locator('.dx-button').filter({ hasText: 'Salvar' }).click();
         await page.waitForTimeout(timeout2);
 
-        console.log('Automação concluída com sucesso!');
-
-        const fimExecucao = new Date();
-        const fimTimestamp = Date.now();
-        const duracaoMs = fimTimestamp - inicioTimestamp;
-
-        const minutos = Math.floor(duracaoMs / 60000);
-        const segundos = Math.floor((duracaoMs % 60000) / 1000);
-
-        console.log('==============================================');
-        console.log(`✅ Fim da execução: ${fimExecucao.toLocaleString('pt-BR')}`);
-        console.log(`⏱ Duração total: ${duracaoMs} ms (${minutos}m ${segundos}s)`);
-        console.log('==============================================');
-
-
-        res.json({
-            success: true,
-            message: 'Questionário preenchido com sucesso',
-            empresa: empresa.nome_empresa
-        });
+        return {
+            empresa: empresa.nome_empresa,
+            sucesso: true,
+            duracao_ms: Date.now() - inicio
+        };
 
     } catch (error) {
-        console.error('Erro na automação:', error);
 
-        const fimExecucao = new Date();
-        const fimTimestamp = Date.now();
-        const duracaoMs = fimTimestamp - inicioTimestamp;
+        console.error(`❌ Erro na empresa ${empresa.nome_empresa}`, error);
 
-        console.log('==============================================');
-        console.log(`❌ Execução finalizada com erro`);
-        console.log(`⏰ Fim: ${fimExecucao.toLocaleString('pt-BR')}`);
-        console.log(`⏱ Duração até erro: ${duracaoMs} ms`);
-        console.log('==============================================');
+        return {
+            empresa: empresa.nome_empresa,
+            sucesso: false,
+            erro: error.message,
+            duracao_ms: Date.now() - inicio
+        };
+    }
+}
 
 
-        res.status(500).json({
-            error: error.message,
-            stack: error.stack
+// ======================================================
+// 🔹 4. PROCESSAR JOB EM BACKGROUND
+// ======================================================
+
+async function processarJob(jobId, empresas, credenciais, isProd) {
+
+    let browser;
+
+    try {
+
+        browser = await criarBrowser(isProd);
+
+        const context = await browser.newContext({
+            userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
         });
-    } finally {
-        if (browser) {
-            await browser.close();
+
+        const page = await context.newPage();
+
+        await fazerLogin(page, credenciais);
+
+        for (const empresa of empresas) {
+
+            const resultado = await executarEmpresa(page, empresa);
+
+            jobs[jobId].resultados.push(resultado);
+            jobs[jobId].processadas++;
         }
+
+        jobs[jobId].status = 'finalizado';
+        jobs[jobId].fim = new Date().toLocaleString('pt-BR');
+
+        console.log(`✅ JOB ${jobId} finalizado`);
+
+    } catch (error) {
+
+        jobs[jobId].status = 'erro';
+        jobs[jobId].erro = error.message;
+
+        console.error(`❌ Erro geral no JOB ${jobId}`, error);
+
+    } finally {
+
+        if (browser) await browser.close();
+    }
+}
+
+
+// ======================================================
+// 🔹 5. ENDPOINT EMPRESA ÚNICA (MANTÉM SEU PADRÃO)
+// ======================================================
+
+app.post('/executar', async (req, res) => {
+
+    let browser;
+
+    try {
+
+        const { empresa, credenciais, isProd } = req.body;
+
+        if (!empresa || !credenciais) {
+            return res.status(400).json({ error: 'Dados incompletos' });
+        }
+
+        browser = await criarBrowser(isProd);
+
+        const context = await browser.newContext();
+        const page = await context.newPage();
+
+        await fazerLogin(page, credenciais);
+
+        const resultado = await executarEmpresa(page, empresa);
+
+        await browser.close();
+
+        res.json(resultado);
+
+    } catch (error) {
+
+        if (browser) await browser.close();
+
+        res.status(500).json({ erro: error.message });
     }
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Executor Playwright rodando na porta ${PORT}`);
+
+// ======================================================
+// 🔹 6. ENDPOINT MÚLTIPLAS EMPRESAS (JOB)
+// ======================================================
+
+app.post('/executarJob', async (req, res) => {
+
+    const { empresas, credenciais, isProd } = req.body;
+
+    if (!empresas || !Array.isArray(empresas) || empresas.length === 0) {
+        return res.status(400).json({ error: 'Empresas (array) é obrigatório' });
+    }
+
+    if (!credenciais) {
+        return res.status(400).json({ error: 'Credenciais são obrigatórias' });
+    }
+
+    const jobId = uuidv4();
+
+    jobs[jobId] = {
+        status: 'running',
+        total: empresas.length,
+        processadas: 0,
+        resultados: [],
+        inicio: new Date().toLocaleString('pt-BR')
+    };
+
+    res.json({
+        success: true,
+        job_id: jobId
+    });
+
+    processarJob(jobId, empresas, credenciais, isProd);
+});
+
+
+// ======================================================
+// 🔹 7. CONSULTAR STATUS
+// ======================================================
+
+app.get('/status/:jobId', (req, res) => {
+
+    const job = jobs[req.params.jobId];
+
+    if (!job) {
+        return res.status(404).json({ error: 'Job não encontrado' });
+    }
+
+    const percentual = ((job.processadas / job.total) * 100).toFixed(1);
+
+    res.json({
+        ...job,
+        percentual: `${percentual}%`
+    });
+});
+
+
+// ======================================================
+// 🔹 8. START SERVER
+// ======================================================
+
+app.listen(3000, () => {
+    console.log("🚀 Servidor rodando na porta 3000");
 });
