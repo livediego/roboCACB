@@ -7,18 +7,7 @@ app.use(express.json({ limit: '10mb' }));
 app.post('/executar', async (req, res) => {
     let browser;
 
-    const inicioExecucao = new Date();
-    const inicioTimestamp = Date.now();
-
-    console.log('==============================================');
-    console.log(`⏰ Início da execução: ${inicioExecucao.toLocaleString('pt-BR')}`);
-    console.log('==============================================');
-
     try {
-
-        const timeout1 = 200;
-        const timeout2 = 2000;
-
         const { empresa, credenciais, questionario, isProd } = req.body;
 
         if (!empresa || !credenciais) {
