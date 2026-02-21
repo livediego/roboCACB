@@ -65,12 +65,12 @@ async function cadastrarEmpresa(page, empresa) {
 
         if (setorIndex !== -1) {
             await page.click('#LSector');
-            await page.waitForTimeout(500);
+            await wait(page);
             const combo = page.locator('.dx-dropdowneditor-overlay:visible');
             await combo.waitFor();
             const opcoes = combo.locator('.dx-item.dx-list-item[role="option"]');
             await opcoes.nth(setorIndex).click();
-            await page.waitForTimeout(500);
+            await wait(page);
         }
     }
 
@@ -80,12 +80,12 @@ async function cadastrarEmpresa(page, empresa) {
 
         if (tamanhoIndex !== -1) {
             await page.click('#LTamanio');
-            await page.waitForTimeout(500);
+            await wait(page);
             const combo = page.locator('.dx-dropdowneditor-overlay:visible');
             await combo.waitFor();
             const opcoes = combo.locator('.dx-item.dx-list-item[role="option"]');
             await opcoes.nth(tamanhoIndex).click();
-            await page.waitForTimeout(500);
+            await wait(page);
         }
     }
 
@@ -100,12 +100,12 @@ async function cadastrarEmpresa(page, empresa) {
 
         if (generoIndex !== -1) {
             await page.click('#LSexo');
-            await page.waitForTimeout(500);
+            await wait(page);
             const combo = page.locator('.dx-dropdowneditor-overlay:visible');
             await combo.waitFor();
             const opcoes = combo.locator('.dx-item.dx-list-item[role="option"]');
             await opcoes.nth(generoIndex).click();
-            await page.waitForTimeout(500);
+            await wait(page);
         }
     }
 
@@ -116,19 +116,19 @@ async function cadastrarEmpresa(page, empresa) {
 
         if (idadeIndex !== -1) {
             await page.click('#LEdad');
-            await page.waitForTimeout(500);
+            await wait(page);
             const combo = page.locator('.dx-dropdowneditor-overlay:visible');
             await combo.waitFor();
             const opcoes = combo.locator('.dx-item.dx-list-item[role="option"]');
             await opcoes.nth(idadeIndex).click();
-            await page.waitForTimeout(500);
+            await wait(page);
         }
     }
 
 
     console.log('💾 Salvando cadastro');
     await page.locator('.dx-button').filter({ hasText: 'Guardar' }).click();
-    await wait(page, 6000);
+    await wait(page, 2000);
 
 }
 
@@ -143,13 +143,24 @@ async function prepararQuestionario(page, empresa) {
     await wait(page, 2000);
 }
 
+async function fechoQuestionario(page, empresa) {
+    // Assinatura
+    await page.fill('input[id*="FirmaNombre"]', empresa.assinatura_nome || '');
+    await page.fill('input[id*="FirmaCargo"]', empresa.cargo_representante || '');
+    await page.fill('input[id*="FirmaFecha"]', formatarDataBR(empresa.assinatura_data));
+
+    console.log('💾 Salvando questionário');
+    await page.locator('.dx-button').filter({ hasText: 'Salvar' }).click();
+    await wait(page, 2000);
+}
+
 // ======================================================
-// 🔹 QUESTIONÁRIO 11OE
+// 🔹 QUESTIONÁRIOS
 // ======================================================
 
 async function preencherQuestionario11OE(page, empresa) {
 
-    console.log('📋 Preenchendo questionário interno');
+    console.log('📋 Preenchendo questionário interno 11OE');
 
     const descricao = [
         ...(empresa.boas_praticas_eficiencia_energetica || []),
@@ -187,14 +198,71 @@ async function preencherQuestionario11OE(page, empresa) {
         await page.fill('input[id*="ActividadFecha"]', formatarDataBR(empresa.data_adocao_praticas));
     }
 
-    // Assinatura
-    await page.fill('input[id*="FirmaNombre"]', empresa.assinatura_nome || '');
-    await page.fill('input[id*="FirmaCargo"]', empresa.cargo_representante || '');
-    await page.fill('input[id*="FirmaFecha"]', formatarDataBR(empresa.assinatura_data));
+    await fechoQuestionario(page, empresa);
+}
 
-    console.log('💾 Salvando questionário');
-    await page.locator('.dx-button').filter({ hasText: 'Salvar' }).click();
-    await wait(page, 2000);
+async function preencherQuestionario12OE(page, empresa) {
+    console.log('📋 Preenchendo questionário interno 12OE');
+    await fechoQuestionario(page, empresa);
+}
+
+async function preencherQuestionario12(page, empresa) {
+    console.log('📋 Preenchendo questionário interno 12');
+    await fechoQuestionario(page, empresa);
+}
+
+async function preencherQuestionario13(page, empresa) {
+    console.log('📋 Preenchendo questionário interno 13');
+    await fechoQuestionario(page, empresa);
+}
+
+async function preencherQuestionario14(page, empresa) {
+    console.log('📋 Preenchendo questionário interno 14');
+
+    const percentuais = [
+        empresa.economia_recurso_monetario,
+        empresa.economia_agua_potavel,
+        empresa.economia_energia_eletrica,
+        empresa.economia_materia_prima,
+        empresa.economia_materiais_insumos,
+        empresa.reducao_descargas_poluentes,
+        empresa.reducao_concentracao_poluentes,
+        empresa.reutilizacao_materiais,
+        empresa.reutilizacao_residuos,
+        empresa.reciclagem_materia_prima,
+        empresa.reciclagem_materiais_residuais,
+        empresa.melhoria_processos_comerciais
+    ];
+
+    const percentuaisMap = {
+        "Economia de recurso monetário": empresa.economia_recurso_monetario,
+        "Economia de água potável": empresa.economia_agua_potavel,
+        "Economia de energia elétrica": empresa.economia_energia_eletrica,
+        "Economia de matéria prima": empresa.economia_materia_prima,
+        "Economia de materiais/insumos": empresa.economia_materiais_insumos,
+        "Redução de descargas poluentes": empresa.reducao_descargas_poluentes,
+        "Redução de concentração de poluentes": empresa.reducao_concentracao_poluentes,
+        "Reutilização de materiais": empresa.reutilizacao_materiais,
+        "Reutilização de resíduos": empresa.reutilizacao_residuos,
+        "Reciclagem de matéria prima": empresa.reciclagem_materia_prima,
+        "Reciclagem de materiais residuais": empresa.reciclagem_materiais_residuais,
+        "Melhoria em processos comerciais": empresa.melhoria_processos_comerciais
+    };
+
+    for (const [key, fieldId] of Object.entries(percentuaisMap)) {
+        const valor = fieldId;
+        if (valor) {
+            console.log(`Preenchendo ${key} com valor ${valor}`);
+            await page.getByRole('button', { name: 'Adicionar uma linha' }).click();
+            await page.getByRole('row', { name: 'Editar   Salvar   Cancelar' }).getByRole('textbox').fill(key);
+            await page.getByRole('row', { name: 'Editar   Salvar   Cancelar' }).getByRole('textbox').press('Tab');
+            await page.getByRole('spinbutton').fill(String(valor));
+            await page.getByRole('link', { name: 'Salvar' }).click();
+            await wait(page, 2000);
+        }
+    }
+
+    await fechoQuestionario(page, empresa);
 }
 
 // ======================================================
@@ -237,13 +305,26 @@ app.post('/executar', async (req, res) => {
             await page.goto(urlQuestionario);
             await page.waitForLoadState('networkidle');
 
-            // PASSOS PADRÃO
             await cadastrarEmpresa(page, empresa);
 
-            // QUESTIONÁRIO ESPECÍFICO
-            if (questionario.nome === "11OE") {
-                await prepararQuestionario(page, empresa);
-                await preencherQuestionario11OE(page, empresa);
+            await prepararQuestionario(page, empresa);
+
+            switch (questionario.nome) {
+                case "11OE":
+                    await preencherQuestionario11OE(page, empresa);
+                    break;
+                case "12OE":
+                    await preencherQuestionario12OE(page, empresa);
+                    break;
+                case "12":
+                    await preencherQuestionario12(page, empresa);
+                    break;
+                case "13":
+                    await preencherQuestionario13(page, empresa);
+                    break;
+                case "14":
+                    await preencherQuestionario14(page, empresa);
+                    break;
             }
         }
 
