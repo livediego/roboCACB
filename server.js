@@ -321,6 +321,18 @@ async function preencherQuestionario14(page, empresa) {
 app.post('/executar', async (req, res) => {
 
     let browser;
+    const inicio = new Date();
+
+    function formatDuration(ms) {
+        const s = Math.floor(ms / 1000);
+        const msRem = ms % 1000;
+        const hh = Math.floor(s / 3600);
+        const mm = Math.floor((s % 3600) / 60);
+        const ss = s % 60;
+        return `${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}:${String(ss).padStart(2,'0')}.${String(msRem).padStart(3,'0')}`;
+    }
+
+    console.log(`⏱️ Início: ${inicio.toLocaleString('pt-BR')}`);
 
     try {
 
@@ -377,17 +389,32 @@ app.post('/executar', async (req, res) => {
             }
         }
 
+        const fim = new Date();
+        const durMs = fim - inicio;
         console.log('Automação concluída com sucesso!');
+        console.log(`⏲️ Encerramento: ${fim.toLocaleString('pt-BR')} — Tempo gasto: ${formatDuration(durMs)} (${durMs} ms)`);
+
         res.json({
             success: true,
             message: 'Automação concluída com sucesso',
-            empresa: empresa.nome_empresa
+            empresa: empresa.nome_empresa,
+            inicio: inicio.toISOString(),
+            fim: fim.toISOString(),
+            duracao_ms: durMs,
+            duracao_hms_ms: formatDuration(durMs)
         });
 
     } catch (error) {
+        const fimErr = new Date();
+        const durMsErr = fimErr - inicio;
         console.error(error);
+        console.log(`⏲️ Encerramento (erro): ${fimErr.toLocaleString('pt-BR')} — Tempo gasto: ${formatDuration(durMsErr)} (${durMsErr} ms)`);
         res.status(500).json({
-            error: error.message
+            error: error.message,
+            inicio: inicio.toISOString(),
+            fim: fimErr.toISOString(),
+            duracao_ms: durMsErr,
+            duracao_hms_ms: formatDuration(durMsErr)
         });
     } finally {
         if (browser) await browser.close();
