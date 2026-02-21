@@ -44,7 +44,7 @@ async function cadastrarEmpresa(page, empresa) {
     await page.click(".dx-icon-add");
     await wait(page, 2000);
 
-    console.log('📝 Preenchendo cadastro');
+    console.log(`📝 Preenchendo cadastro da Empresa ${empresa.nome_empresa}`);
 
     // País
     await page.click('#LPais');
