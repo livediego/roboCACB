@@ -203,6 +203,52 @@ async function preencherQuestionario11OE(page, empresa) {
 
 async function preencherQuestionario12OE(page, empresa) {
     console.log('📋 Preenchendo questionário interno 12OE');
+
+
+    const sexoMap = {
+        "Mulher": "Mujer/Women",
+        "Homem": "Hombre/Man",
+        "Prefere não informar": "Prefiere no indicar/Prefers not to indicate"
+    }
+
+    const empregos = empresa.empregos_sustentaveis || { tabela: [] };
+
+    for (const emprego of empregos.tabela) {
+        await page.getByRole('button', { name: 'Adicionar uma linha' }).click();
+        await page.getByRole('spinbutton').first().fill(String(emprego.ano));
+        await page.getByRole('spinbutton').first().press('Tab');
+        await page.getByRole('row', { name: 'Editar   Salvar   Cancelar' }).getByLabel('Selecione').click();
+        await page.getByRole('listbox').getByText(sexoMap[emprego.sexo]).click();
+        await page.getByRole('row', { name: 'Editar   Salvar   Cancelar' }).getByRole('combobox').press('Tab');
+        await page.getByRole('spinbutton').nth(1).fill(String(emprego.formal_sustentavel));
+        await page.getByRole('spinbutton').nth(1).press('Tab');
+        await page.getByRole('spinbutton').nth(2).fill(String(emprego.informal_sustentavel));
+        await page.getByRole('spinbutton').nth(2).press('Tab');
+        await page.getByRole('spinbutton').nth(3).fill(String(emprego.formal_digital));
+        await page.getByRole('spinbutton').nth(3).press('Tab');
+        await page.getByRole('spinbutton').nth(4).fill(String(emprego.informal_digital));
+        await page.getByRole('link', { name: 'Salvar' }).click();
+        await wait(page, 2000);
+    }
+
+    // Marcar checkboxes de áreas de empregos verdes
+    const areasEmpregos = empresa.areas_empregos_verdes || [];
+    for (let i = 0; i < areasEmpregos.length; i++) {
+        if (areasEmpregos[i].valor) {
+            console.log(`Marcando área de emprego verde nº ${i + 1}, de nome ${areasEmpregos[i].nome} com valor ${areasEmpregos[i].valor}`);
+            const areaSelector = `[id$="_Area${i + 1}"]`;
+            await page.locator(areaSelector).click();
+            await wait(page);
+        }
+    }
+
+    // Preencher detalhe de áreas de empregos verdes se fornecido
+    if (empresa.detalhe_area_empregos) {
+        const detalheSelector = `[id$="_Area8detalle"]`;
+        await page.locator(detalheSelector).fill(empresa.detalhe_area_empregos);
+        await wait(page);
+    }
+
     await fechoQuestionario(page, empresa);
 }
 
@@ -213,6 +259,9 @@ async function preencherQuestionario12(page, empresa) {
 
 async function preencherQuestionario13(page, empresa) {
     console.log('📋 Preenchendo questionário interno 13');
+    await page.getByRole('spinbutton', { name: 'Ano de faturamento:' }).fill(String(empresa.ano_faturamento));
+    await page.getByRole('spinbutton', { name: 'O volume de negócios é de:' }).fill(String(empresa.volume_negocios));
+    await page.locator(`#cbLimite${empresa.aumento_faturamento}`).click();
     await fechoQuestionario(page, empresa);
 }
 
