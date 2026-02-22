@@ -193,6 +193,21 @@ async function preencherQuestionario11OE(page, empresa) {
         }
     }
 
+    // Marcar checkboxes de áreas de aplicação
+    const areasAplicacao = empresa.areas_aplicacao || [];
+    for (let i = 0; i < areasAplicacao.length; i++) {
+        if (areasAplicacao[i].valor) {
+            console.log(`Marcando área de aplicação nº ${i + 1}, de nome ${areasAplicacao[i].nome} com valor ${areasAplicacao[i].valor}`);
+            const areaSelector = `[id$="_Area${i + 1}"]`;
+            await page.locator(areaSelector).click();
+            await wait(page);
+        }
+    }
+
+    if (empresa.detalhe_area) {
+        await page.fill('input[id*="Area8detalle"]', String(empresa.detalhe_area));
+    }
+
     // Data
     if (empresa.data_adocao_praticas) {
         await page.fill('input[id*="ActividadFecha"]', formatarDataBR(empresa.data_adocao_praticas));
@@ -254,6 +269,41 @@ async function preencherQuestionario12OE(page, empresa) {
 
 async function preencherQuestionario12(page, empresa) {
     console.log('📋 Preenchendo questionário interno 12');
+
+    await page.locator('textarea').fill(empresa.certificacao_nome || '');
+
+    // Marcar checkboxes de características de certificações
+    const caracteristicasCertificacoes = empresa.certificacao_caracteristicas || [];
+    for (let i = 0; i < caracteristicasCertificacoes.length; i++) {
+        if (caracteristicasCertificacoes[i].valor) {
+            console.log(`Marcando característica de certificação nº ${i + 1}, de nome ${caracteristicasCertificacoes[i].nome} com valor ${caracteristicasCertificacoes[i].valor}`);
+            if (i === 0) {
+                await page.getByRole('checkbox').first().click();
+            } else {
+                await page.getByRole('checkbox').nth(i).click();
+            }
+            await wait(page);
+        }
+    }
+
+    // Marcar checkboxes de áreas de certificações
+    const areasCertificacoes = empresa.certificacao_areas || [];
+    for (let i = 0; i < areasCertificacoes.length; i++) {
+        if (areasCertificacoes[i].valor) {
+            console.log(`Marcando área de certificação nº ${i + 1}, de nome ${areasCertificacoes[i].nome} com valor ${areasCertificacoes[i].valor}`);
+            const areaSelector = `[id$="_Area${i + 1}"]`;
+            await page.locator(areaSelector).click();
+            await wait(page);
+        }
+    }
+
+    // Preencher detalhe de áreas de certificações se fornecido
+    if (empresa.certificacao_outro_detalhe) {
+        const detalheSelector = `[id$="_Area8detalle"]`;
+        await page.locator(detalheSelector).fill(empresa.certificacao_outro_detalhe);
+        await wait(page);
+    }
+
     await fechoQuestionario(page, empresa);
 }
 
@@ -329,7 +379,7 @@ app.post('/executar', async (req, res) => {
         const hh = Math.floor(s / 3600);
         const mm = Math.floor((s % 3600) / 60);
         const ss = s % 60;
-        return `${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}:${String(ss).padStart(2,'0')}.${String(msRem).padStart(3,'0')}`;
+        return `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')}.${String(msRem).padStart(3, '0')}`;
     }
 
     console.log(`⏱️ Início: ${inicio.toLocaleString('pt-BR')}`);
