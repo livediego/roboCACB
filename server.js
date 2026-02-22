@@ -1,5 +1,6 @@
 const express = require('express');
 const { chromium } = require('playwright');
+const path = require('path');
 
 const app = express();
 app.use(express.json({ limit: '10mb' }));
@@ -32,6 +33,36 @@ async function fazerLogin(page, credenciais) {
     await page.fill("#Contrasenia", credenciais.password);
     await page.click("button:has-text('Ingresar')");
     await page.waitForLoadState('networkidle');
+}
+
+async function gerarPDF(page, empresa) {
+    await page.goto('https://alinvestverdecacb.com.br/DetalhesEmpresa?id=' + empresa.id);
+    await page.waitForLoadState('networkidle');
+
+    // Salva o PDF no diretório atual
+    await page.pdf({ path: empresa.nome_empresa + '.pdf', format: 'A4' });
+    console.log('PDF salvo localmente como ' + empresa.nome_empresa + '.pdf');
+    await wait(page, 2000);
+};
+
+async function uploadPDF(page, empresa) {
+    console.log('📤 Enviando PDF para o servidor...');
+
+    // 1. Definir o path
+    const filePath = path.join(__dirname, empresa.nome_empresa + '.pdf');
+
+    // 2. Preparar o listener para capturar a janela de arquivos antes de clicar
+    const fileChooserPromise = page.waitForEvent('filechooser');
+
+    // 3. Clicar no botão/div que abre a janela
+    await page.locator('div[aria-label="Upload files"]').click();
+
+    // 4. Aguardar o evento disparar e enviar o arquivo
+    const fileChooser = await fileChooserPromise;
+    await fileChooser.setFiles(filePath);
+    await wait(page, 5000);
+
+    console.log('Upload concluído.');
 }
 
 // ======================================================
@@ -130,17 +161,6 @@ async function cadastrarEmpresa(page, empresa) {
     await page.locator('.dx-button').filter({ hasText: 'Guardar' }).click();
     await wait(page, 2000);
 
-}
-
-async function prepararQuestionario(page, empresa) {
-    console.log('📄 Indo para última página');
-    await page.locator('.dx-page-indexes .dx-page').last().click();
-    await wait(page, 2000);
-
-    console.log('✏️ Editando empresa');
-    const linhaEmpresa = page.locator('.dx-data-row', { hasText: empresa.nome_empresa });
-    await linhaEmpresa.locator('.dx-link-edit').click();
-    await wait(page, 2000);
 }
 
 async function fechoQuestionario(page, empresa) {
@@ -400,6 +420,8 @@ app.post('/executar', async (req, res) => {
         const context = await browser.newContext();
         const page = await context.newPage();
 
+        await gerarPDF(page, empresa);
+
         await fazerLogin(page, credenciais);
 
         for (const questionario of questionarios) {
@@ -418,7 +440,16 @@ app.post('/executar', async (req, res) => {
 
             await cadastrarEmpresa(page, empresa);
 
-            await prepararQuestionario(page, empresa);
+
+            // Preparar questionário para preenchimento (navegar até a empresa e clicar em editar)
+            console.log('📄 Indo para última página');
+            await page.locator('.dx-page-indexes .dx-page').last().click();
+            await wait(page, 2000);
+
+            console.log('✏️ Editando empresa');
+            const linhaEmpresa = page.locator('.dx-data-row', { hasText: empresa.nome_empresa });
+            await linhaEmpresa.locator('.dx-link-edit').click();
+            await wait(page, 2000);
 
             switch (questionario.nome) {
                 case "11OE":
@@ -437,6 +468,12 @@ app.post('/executar', async (req, res) => {
                     await preencherQuestionario14(page, empresa);
                     break;
             }
+
+            // Fazer upload do PDF para o questionário
+            await linhaEmpresa.locator('.dx-icon-doc').click();
+            await wait(page, 2000);
+            await uploadPDF(page, empresa);
+
         }
 
         const fim = new Date();
