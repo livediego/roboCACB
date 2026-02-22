@@ -213,304 +213,332 @@ async function preencherQuestionario11OE(page, empresa) {
         }
     }
 
-    // Marcar checkboxes de áreas de aplicação
-    const areasAplicacao = empresa.areas_aplicacao || [];
-    for (let i = 0; i < areasAplicacao.length; i++) {
-        if (areasAplicacao[i].valor) {
-            console.log(`Marcando área de aplicação nº ${i + 1}, de nome ${areasAplicacao[i].nome} com valor ${areasAplicacao[i].valor}`);
-            const areaSelector = `[id$="_Area${i + 1}"]`;
-            await page.locator(areaSelector).click();
-            await wait(page);
-        }
-    }
+    // Atividades geradas
+    if (empresa.atividades_geradas && empresa.atividades_geradas.length > 0) {
+        const atividadesMap = {
+            "Redesenho de produtos": "Actividad1",
+            "Redesenho de embalagens": "Actividad2",
+            "Investimento em maquinário eficiente": "Actividad3",
+            "Investimento em energia renovável": "Actividad4",
+            "Investimento em infraestrutura sustentável": "Actividad5",
+            "Treinamento em produção sustentável": "Actividad6",
+            "Melhoria na comunicação com clientes": "Actividad7",
+            "Cumprimento de normas ecológicas": "Actividad8",
+            "Outro": "Actividad9"
+        };
 
-    if (empresa.detalhe_area) {
-        await page.fill('input[id*="Area8detalle"]', String(empresa.detalhe_area));
-    }
-
-    // Data
-    if (empresa.data_adocao_praticas) {
-        await page.fill('input[id*="ActividadFecha"]', formatarDataBR(empresa.data_adocao_praticas));
-    }
-
-    await fechoQuestionario(page, empresa);
-}
-
-async function preencherQuestionario12OE(page, empresa) {
-    console.log('📋 Preenchendo questionário interno 12OE');
-
-
-    const sexoMap = {
-        "Mulher": "Mujer/Women",
-        "Homem": "Hombre/Man",
-        "Prefere não informar": "Prefiere no indicar/Prefers not to indicate"
-    }
-
-    const empregos = empresa.empregos_sustentaveis || { tabela: [] };
-
-    for (const emprego of empregos.tabela) {
-        await page.getByRole('button', { name: 'Adicionar uma linha' }).click();
-        await page.getByRole('spinbutton').first().fill(String(emprego.ano));
-        await page.getByRole('spinbutton').first().press('Tab');
-        await page.getByRole('row', { name: 'Editar   Salvar   Cancelar' }).getByLabel('Selecione').click();
-        await page.getByRole('listbox').getByText(sexoMap[emprego.sexo]).click();
-        await page.getByRole('row', { name: 'Editar   Salvar   Cancelar' }).getByRole('combobox').press('Tab');
-        await page.getByRole('spinbutton').nth(1).fill(String(emprego.formal_sustentavel));
-        await page.getByRole('spinbutton').nth(1).press('Tab');
-        await page.getByRole('spinbutton').nth(2).fill(String(emprego.informal_sustentavel));
-        await page.getByRole('spinbutton').nth(2).press('Tab');
-        await page.getByRole('spinbutton').nth(3).fill(String(emprego.formal_digital));
-        await page.getByRole('spinbutton').nth(3).press('Tab');
-        await page.getByRole('spinbutton').nth(4).fill(String(emprego.informal_digital));
-        await page.getByRole('link', { name: 'Salvar' }).click();
-        await wait(page, 2000);
-    }
-
-    // Marcar checkboxes de áreas de empregos verdes
-    const areasEmpregos = empresa.areas_empregos_verdes || [];
-    for (let i = 0; i < areasEmpregos.length; i++) {
-        if (areasEmpregos[i].valor) {
-            console.log(`Marcando área de emprego verde nº ${i + 1}, de nome ${areasEmpregos[i].nome} com valor ${areasEmpregos[i].valor}`);
-            const areaSelector = `[id$="_Area${i + 1}"]`;
-            await page.locator(areaSelector).click();
-            await wait(page);
-        }
-    }
-
-    // Preencher detalhe de áreas de empregos verdes se fornecido
-    if (empresa.detalhe_area_empregos) {
-        const detalheSelector = `[id$="_Area8detalle"]`;
-        await page.locator(detalheSelector).fill(empresa.detalhe_area_empregos);
-        await wait(page);
-    }
-
-    await fechoQuestionario(page, empresa);
-}
-
-async function preencherQuestionario12(page, empresa) {
-    console.log('📋 Preenchendo questionário interno 12');
-
-    await page.locator('textarea').fill(empresa.certificacao_nome || '');
-
-    // Marcar checkboxes de características de certificações
-    const caracteristicasCertificacoes = empresa.certificacao_caracteristicas || [];
-    for (let i = 0; i < caracteristicasCertificacoes.length; i++) {
-        if (caracteristicasCertificacoes[i].valor) {
-            console.log(`Marcando característica de certificação nº ${i + 1}, de nome ${caracteristicasCertificacoes[i].nome} com valor ${caracteristicasCertificacoes[i].valor}`);
-            if (i === 0) {
-                await page.getByRole('checkbox').first().click();
-            } else {
-                await page.getByRole('checkbox').nth(i).click();
+        for (const atividade of empresa.atividades_geradas) {
+            for (const [key, fieldId] of Object.entries(atividadesMap)) {
+                if (atividade.includes(key)) {
+                    await page.locator(`[id$="${fieldId}"]`).first().click();
+                    console.log(`Atividade: ${atividade}, campo=${fieldId}`)
+                }
             }
-            await wait(page);
         }
-    }
 
-    // Marcar checkboxes de áreas de certificações
-    const areasCertificacoes = empresa.certificacao_areas || [];
-    for (let i = 0; i < areasCertificacoes.length; i++) {
-        if (areasCertificacoes[i].valor) {
-            console.log(`Marcando área de certificação nº ${i + 1}, de nome ${areasCertificacoes[i].nome} com valor ${areasCertificacoes[i].valor}`);
-            const areaSelector = `[id$="_Area${i + 1}"]`;
-            await page.locator(areaSelector).click();
-            await wait(page);
+        if (empresa.detalhe_atividade) {
+            await page.fill('input[id*="Actividad9detalle"]', String(empresa.detalhe_atividade));
         }
+
+
+        // Marcar checkboxes de áreas de aplicação
+        const areasAplicacao = empresa.areas_aplicacao || [];
+        for (let i = 0; i < areasAplicacao.length; i++) {
+            if (areasAplicacao[i].valor) {
+                console.log(`Marcando área de aplicação nº ${i + 1}, de nome ${areasAplicacao[i].nome} com valor ${areasAplicacao[i].valor}`);
+                const areaSelector = `[id$="_Area${i + 1}"]`;
+                await page.locator(areaSelector).click();
+                await wait(page);
+            }
+        }
+
+        if (empresa.detalhe_area) {
+            await page.fill('input[id*="Area8detalle"]', String(empresa.detalhe_area));
+        }
+
+        // Data
+        if (empresa.data_adocao_praticas) {
+            await page.fill('input[id*="ActividadFecha"]', formatarDataBR(empresa.data_adocao_praticas));
+        }
+
+        await fechoQuestionario(page, empresa);
     }
 
-    // Preencher detalhe de áreas de certificações se fornecido
-    if (empresa.certificacao_outro_detalhe) {
-        const detalheSelector = `[id$="_Area8detalle"]`;
-        await page.locator(detalheSelector).fill(empresa.certificacao_outro_detalhe);
-        await wait(page);
-    }
+    async function preencherQuestionario12OE(page, empresa) {
+        console.log('📋 Preenchendo questionário interno 12OE');
 
-    await fechoQuestionario(page, empresa);
-}
 
-async function preencherQuestionario13(page, empresa) {
-    console.log('📋 Preenchendo questionário interno 13');
-    await page.getByRole('spinbutton', { name: 'Ano de faturamento:' }).fill(String(empresa.ano_faturamento));
-    await page.getByRole('spinbutton', { name: 'O volume de negócios é de:' }).fill(String(empresa.volume_negocios));
-    await page.locator(`#cbLimite${empresa.aumento_faturamento}`).click();
-    await fechoQuestionario(page, empresa);
-}
+        const sexoMap = {
+            "Mulher": "Mujer/Women",
+            "Homem": "Hombre/Man",
+            "Prefere não informar": "Prefiere no indicar/Prefers not to indicate"
+        }
 
-async function preencherQuestionario14(page, empresa) {
-    console.log('📋 Preenchendo questionário interno 14');
+        const empregos = empresa.empregos_sustentaveis || { tabela: [] };
 
-    const percentuais = [
-        empresa.economia_recurso_monetario,
-        empresa.economia_agua_potavel,
-        empresa.economia_energia_eletrica,
-        empresa.economia_materia_prima,
-        empresa.economia_materiais_insumos,
-        empresa.reducao_descargas_poluentes,
-        empresa.reducao_concentracao_poluentes,
-        empresa.reutilizacao_materiais,
-        empresa.reutilizacao_residuos,
-        empresa.reciclagem_materia_prima,
-        empresa.reciclagem_materiais_residuais,
-        empresa.melhoria_processos_comerciais
-    ];
-
-    const percentuaisMap = {
-        "Economia de recurso monetário": empresa.economia_recurso_monetario,
-        "Economia de água potável": empresa.economia_agua_potavel,
-        "Economia de energia elétrica": empresa.economia_energia_eletrica,
-        "Economia de matéria prima": empresa.economia_materia_prima,
-        "Economia de materiais/insumos": empresa.economia_materiais_insumos,
-        "Redução de descargas poluentes": empresa.reducao_descargas_poluentes,
-        "Redução de concentração de poluentes": empresa.reducao_concentracao_poluentes,
-        "Reutilização de materiais": empresa.reutilizacao_materiais,
-        "Reutilização de resíduos": empresa.reutilizacao_residuos,
-        "Reciclagem de matéria prima": empresa.reciclagem_materia_prima,
-        "Reciclagem de materiais residuais": empresa.reciclagem_materiais_residuais,
-        "Melhoria em processos comerciais": empresa.melhoria_processos_comerciais
-    };
-
-    for (const [key, fieldId] of Object.entries(percentuaisMap)) {
-        const valor = fieldId;
-        if (valor) {
-            console.log(`Preenchendo ${key} com valor ${valor}`);
+        for (const emprego of empregos.tabela) {
             await page.getByRole('button', { name: 'Adicionar uma linha' }).click();
-            await page.getByRole('row', { name: 'Editar   Salvar   Cancelar' }).getByRole('textbox').fill(key);
-            await page.getByRole('row', { name: 'Editar   Salvar   Cancelar' }).getByRole('textbox').press('Tab');
-            await page.getByRole('spinbutton').fill(String(valor));
+            await page.getByRole('spinbutton').first().fill(String(emprego.ano));
+            await page.getByRole('spinbutton').first().press('Tab');
+            await page.getByRole('row', { name: 'Editar   Salvar   Cancelar' }).getByLabel('Selecione').click();
+            await page.getByRole('listbox').getByText(sexoMap[emprego.sexo]).click();
+            await page.getByRole('row', { name: 'Editar   Salvar   Cancelar' }).getByRole('combobox').press('Tab');
+            await page.getByRole('spinbutton').nth(1).fill(String(emprego.formal_sustentavel));
+            await page.getByRole('spinbutton').nth(1).press('Tab');
+            await page.getByRole('spinbutton').nth(2).fill(String(emprego.informal_sustentavel));
+            await page.getByRole('spinbutton').nth(2).press('Tab');
+            await page.getByRole('spinbutton').nth(3).fill(String(emprego.formal_digital));
+            await page.getByRole('spinbutton').nth(3).press('Tab');
+            await page.getByRole('spinbutton').nth(4).fill(String(emprego.informal_digital));
             await page.getByRole('link', { name: 'Salvar' }).click();
             await wait(page, 2000);
         }
-    }
 
-    await fechoQuestionario(page, empresa);
-}
-
-// ======================================================
-// 🔹 ENDPOINT PRINCIPAL
-// ======================================================
-
-app.post('/executar', async (req, res) => {
-
-    let browser;
-    const inicio = new Date();
-
-    function formatDuration(ms) {
-        const s = Math.floor(ms / 1000);
-        const msRem = ms % 1000;
-        const hh = Math.floor(s / 3600);
-        const mm = Math.floor((s % 3600) / 60);
-        const ss = s % 60;
-        return `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')}.${String(msRem).padStart(3, '0')}`;
-    }
-
-    console.log(`⏱️ Início: ${inicio.toLocaleString('pt-BR')}`);
-
-    try {
-
-        const { empresa, credenciais, isProd, questionarios } = req.body;
-
-        if (!empresa || !credenciais) {
-            return res.status(400).json({ error: 'Dados incompletos' });
+        // Marcar checkboxes de áreas de empregos verdes
+        const areasEmpregos = empresa.areas_empregos_verdes || [];
+        for (let i = 0; i < areasEmpregos.length; i++) {
+            if (areasEmpregos[i].valor) {
+                console.log(`Marcando área de emprego verde nº ${i + 1}, de nome ${areasEmpregos[i].nome} com valor ${areasEmpregos[i].valor}`);
+                const areaSelector = `[id$="_Area${i + 1}"]`;
+                await page.locator(areaSelector).click();
+                await wait(page);
+            }
         }
 
-        browser = await chromium.launch({
-            headless: isProd,
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
-        });
-
-        const context = await browser.newContext();
-        const page = await context.newPage();
-
-        await gerarPDF(page, empresa);
-
-        await fazerLogin(page, credenciais);
-
-        for (const questionario of questionarios) {
-
-            console.log(`Executando questionário: ${questionario.nome} na url ${questionario.url}`);
-
-
-            // Abrir questionário correto
-            const urlQuestionario = questionario.url;
-            if (!urlQuestionario) {
-                throw new Error("Questionário inválido");
-            }
-
-            await page.goto(urlQuestionario);
-            await page.waitForLoadState('networkidle');
-
-            await cadastrarEmpresa(page, empresa);
-
-
-            // Preparar questionário para preenchimento (navegar até a empresa e clicar em editar)
-            console.log('📄 Indo para última página');
-            await page.locator('.dx-page-indexes .dx-page').last().click();
-            await wait(page, 2000);
-
-            console.log('✏️ Editando empresa');
-            const linhaEmpresa = page.locator('.dx-data-row', { hasText: empresa.nome_empresa });
-            await linhaEmpresa.locator('.dx-link-edit').click();
-            await wait(page, 2000);
-
-            switch (questionario.nome) {
-                case "11OE":
-                    await preencherQuestionario11OE(page, empresa);
-                    break;
-                case "12OE":
-                    await preencherQuestionario12OE(page, empresa);
-                    break;
-                case "12":
-                    await preencherQuestionario12(page, empresa);
-                    break;
-                case "13":
-                    await preencherQuestionario13(page, empresa);
-                    break;
-                case "14":
-                    await preencherQuestionario14(page, empresa);
-                    break;
-            }
-
-            // Fazer upload do PDF para o questionário
-            await linhaEmpresa.locator('.dx-icon-doc').click();
-            await wait(page, 2000);
-            await uploadPDF(page, empresa);
-
+        // Preencher detalhe de áreas de empregos verdes se fornecido
+        if (empresa.detalhe_area_empregos) {
+            const detalheSelector = `[id$="_Area8detalle"]`;
+            await page.locator(detalheSelector).fill(empresa.detalhe_area_empregos);
+            await wait(page);
         }
 
-        const fim = new Date();
-        const durMs = fim - inicio;
-        console.log('Automação concluída com sucesso!');
-        console.log(`⏲️ Encerramento: ${fim.toLocaleString('pt-BR')} — Tempo gasto: ${formatDuration(durMs)} (${durMs} ms)`);
-
-        res.json({
-            success: true,
-            message: 'Automação concluída com sucesso',
-            empresa: empresa.nome_empresa,
-            inicio: inicio.toISOString(),
-            fim: fim.toISOString(),
-            duracao_ms: durMs,
-            duracao_hms_ms: formatDuration(durMs)
-        });
-
-    } catch (error) {
-        const fimErr = new Date();
-        const durMsErr = fimErr - inicio;
-        console.error(error);
-        console.log(`⏲️ Encerramento (erro): ${fimErr.toLocaleString('pt-BR')} — Tempo gasto: ${formatDuration(durMsErr)} (${durMsErr} ms)`);
-        res.status(500).json({
-            error: error.message,
-            inicio: inicio.toISOString(),
-            fim: fimErr.toISOString(),
-            duracao_ms: durMsErr,
-            duracao_hms_ms: formatDuration(durMsErr)
-        });
-    } finally {
-        if (browser) await browser.close();
+        await fechoQuestionario(page, empresa);
     }
-});
 
-// ======================================================
+    async function preencherQuestionario12(page, empresa) {
+        console.log('📋 Preenchendo questionário interno 12');
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`🚀 Executor rodando na porta ${PORT}`);
-});
+        await page.locator('textarea').fill(empresa.certificacao_nome || '');
+
+        // Marcar checkboxes de características de certificações
+        const caracteristicasCertificacoes = empresa.certificacao_caracteristicas || [];
+        for (let i = 0; i < caracteristicasCertificacoes.length; i++) {
+            if (caracteristicasCertificacoes[i].valor) {
+                console.log(`Marcando característica de certificação nº ${i + 1}, de nome ${caracteristicasCertificacoes[i].nome} com valor ${caracteristicasCertificacoes[i].valor}`);
+                if (i === 0) {
+                    await page.getByRole('checkbox').first().click();
+                } else {
+                    await page.getByRole('checkbox').nth(i).click();
+                }
+                await wait(page);
+            }
+        }
+
+        // Marcar checkboxes de áreas de certificações
+        const areasCertificacoes = empresa.certificacao_areas || [];
+        for (let i = 0; i < areasCertificacoes.length; i++) {
+            if (areasCertificacoes[i].valor) {
+                console.log(`Marcando área de certificação nº ${i + 1}, de nome ${areasCertificacoes[i].nome} com valor ${areasCertificacoes[i].valor}`);
+                const areaSelector = `[id$="_Area${i + 1}"]`;
+                await page.locator(areaSelector).click();
+                await wait(page);
+            }
+        }
+
+        // Preencher detalhe de áreas de certificações se fornecido
+        if (empresa.certificacao_outro_detalhe) {
+            const detalheSelector = `[id$="_Area8detalle"]`;
+            await page.locator(detalheSelector).fill(empresa.certificacao_outro_detalhe);
+            await wait(page);
+        }
+
+        await fechoQuestionario(page, empresa);
+    }
+
+    async function preencherQuestionario13(page, empresa) {
+        console.log('📋 Preenchendo questionário interno 13');
+        await page.getByRole('spinbutton', { name: 'Ano de faturamento:' }).fill(String(empresa.ano_faturamento));
+        await page.getByRole('spinbutton', { name: 'O volume de negócios é de:' }).fill(String(empresa.volume_negocios));
+        await page.locator(`#cbLimite${empresa.aumento_faturamento}`).click();
+        await fechoQuestionario(page, empresa);
+    }
+
+    async function preencherQuestionario14(page, empresa) {
+        console.log('📋 Preenchendo questionário interno 14');
+
+        const percentuais = [
+            empresa.economia_recurso_monetario,
+            empresa.economia_agua_potavel,
+            empresa.economia_energia_eletrica,
+            empresa.economia_materia_prima,
+            empresa.economia_materiais_insumos,
+            empresa.reducao_descargas_poluentes,
+            empresa.reducao_concentracao_poluentes,
+            empresa.reutilizacao_materiais,
+            empresa.reutilizacao_residuos,
+            empresa.reciclagem_materia_prima,
+            empresa.reciclagem_materiais_residuais,
+            empresa.melhoria_processos_comerciais
+        ];
+
+        const percentuaisMap = {
+            "Economia de recurso monetário": empresa.economia_recurso_monetario,
+            "Economia de água potável": empresa.economia_agua_potavel,
+            "Economia de energia elétrica": empresa.economia_energia_eletrica,
+            "Economia de matéria prima": empresa.economia_materia_prima,
+            "Economia de materiais/insumos": empresa.economia_materiais_insumos,
+            "Redução de descargas poluentes": empresa.reducao_descargas_poluentes,
+            "Redução de concentração de poluentes": empresa.reducao_concentracao_poluentes,
+            "Reutilização de materiais": empresa.reutilizacao_materiais,
+            "Reutilização de resíduos": empresa.reutilizacao_residuos,
+            "Reciclagem de matéria prima": empresa.reciclagem_materia_prima,
+            "Reciclagem de materiais residuais": empresa.reciclagem_materiais_residuais,
+            "Melhoria em processos comerciais": empresa.melhoria_processos_comerciais
+        };
+
+        for (const [key, fieldId] of Object.entries(percentuaisMap)) {
+            const valor = fieldId;
+            if (valor) {
+                console.log(`Preenchendo ${key} com valor ${valor}`);
+                await page.getByRole('button', { name: 'Adicionar uma linha' }).click();
+                await page.getByRole('row', { name: 'Editar   Salvar   Cancelar' }).getByRole('textbox').fill(key);
+                await page.getByRole('row', { name: 'Editar   Salvar   Cancelar' }).getByRole('textbox').press('Tab');
+                await page.getByRole('spinbutton').fill(String(valor));
+                await page.getByRole('link', { name: 'Salvar' }).click();
+                await wait(page, 2000);
+            }
+        }
+
+        await fechoQuestionario(page, empresa);
+    }
+
+    // ======================================================
+    // 🔹 ENDPOINT PRINCIPAL
+    // ======================================================
+
+    app.post('/executar', async (req, res) => {
+
+        let browser;
+        const inicio = new Date();
+
+        function formatDuration(ms) {
+            const s = Math.floor(ms / 1000);
+            const msRem = ms % 1000;
+            const hh = Math.floor(s / 3600);
+            const mm = Math.floor((s % 3600) / 60);
+            const ss = s % 60;
+            return `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')}.${String(msRem).padStart(3, '0')}`;
+        }
+
+        console.log(`⏱️ Início: ${inicio.toLocaleString('pt-BR')}`);
+
+        try {
+
+            const { empresa, credenciais, isProd, questionarios } = req.body;
+
+            if (!empresa || !credenciais) {
+                return res.status(400).json({ error: 'Dados incompletos' });
+            }
+
+            browser = await chromium.launch({
+                headless: isProd,
+                args: ['--no-sandbox', '--disable-setuid-sandbox']
+            });
+
+            const context = await browser.newContext();
+            const page = await context.newPage();
+
+            await gerarPDF(page, empresa);
+
+            await fazerLogin(page, credenciais);
+
+            for (const questionario of questionarios) {
+
+                console.log(`Executando questionário: ${questionario.nome} na url ${questionario.url}`);
+
+
+                // Abrir questionário correto
+                const urlQuestionario = questionario.url;
+                if (!urlQuestionario) {
+                    throw new Error("Questionário inválido");
+                }
+
+                await page.goto(urlQuestionario);
+                await page.waitForLoadState('networkidle');
+
+                await cadastrarEmpresa(page, empresa);
+
+
+                // Preparar questionário para preenchimento (navegar até a empresa e clicar em editar)
+                console.log('📄 Indo para última página');
+                await page.locator('.dx-page-indexes .dx-page').last().click();
+                await wait(page, 2000);
+
+                console.log('✏️ Editando empresa');
+                const linhaEmpresa = page.locator('.dx-data-row', { hasText: empresa.nome_empresa });
+                await linhaEmpresa.locator('.dx-link-edit').click();
+                await wait(page, 2000);
+
+                switch (questionario.nome) {
+                    case "11OE":
+                        await preencherQuestionario11OE(page, empresa);
+                        break;
+                    case "12OE":
+                        await preencherQuestionario12OE(page, empresa);
+                        break;
+                    case "12":
+                        await preencherQuestionario12(page, empresa);
+                        break;
+                    case "13":
+                        await preencherQuestionario13(page, empresa);
+                        break;
+                    case "14":
+                        await preencherQuestionario14(page, empresa);
+                        break;
+                }
+
+                // Fazer upload do PDF para o questionário
+                await linhaEmpresa.locator('.dx-icon-doc').click();
+                await wait(page, 2000);
+                await uploadPDF(page, empresa);
+
+            }
+
+            const fim = new Date();
+            const durMs = fim - inicio;
+            console.log('Automação concluída com sucesso!');
+            console.log(`⏲️ Encerramento: ${fim.toLocaleString('pt-BR')} — Tempo gasto: ${formatDuration(durMs)} (${durMs} ms)`);
+
+            res.json({
+                success: true,
+                message: 'Automação concluída com sucesso',
+                empresa: empresa.nome_empresa,
+                inicio: inicio.toISOString(),
+                fim: fim.toISOString(),
+                duracao_ms: durMs,
+                duracao_hms_ms: formatDuration(durMs)
+            });
+
+        } catch (error) {
+            const fimErr = new Date();
+            const durMsErr = fimErr - inicio;
+            console.error(error);
+            console.log(`⏲️ Encerramento (erro): ${fimErr.toLocaleString('pt-BR')} — Tempo gasto: ${formatDuration(durMsErr)} (${durMsErr} ms)`);
+            res.status(500).json({
+                error: error.message,
+                inicio: inicio.toISOString(),
+                fim: fimErr.toISOString(),
+                duracao_ms: durMsErr,
+                duracao_hms_ms: formatDuration(durMsErr)
+            });
+        } finally {
+            if (browser) await browser.close();
+        }
+    });
+
+    // ======================================================
+
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+        console.log(`🚀 Executor rodando na porta ${PORT}`);
+    });
