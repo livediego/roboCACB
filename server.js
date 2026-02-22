@@ -216,15 +216,14 @@ async function preencherQuestionario11OE(page, empresa) {
     // Atividades geradas
     if (empresa.atividades_geradas && empresa.atividades_geradas.length > 0) {
         const atividadesMap = {
-            "Redesenho de produtos": "Actividad1",
-            "Redesenho de embalagens": "Actividad2",
-            "Investimento em maquinário eficiente": "Actividad3",
-            "Investimento em energia renovável": "Actividad4",
-            "Investimento em infraestrutura sustentável": "Actividad5",
-            "Treinamento em produção sustentável": "Actividad6",
-            "Melhoria na comunicação com clientes": "Actividad7",
-            "Cumprimento de normas ecológicas": "Actividad8",
-            "Outro": "Actividad9"
+            "Redesenho de produtos e serviços": "Actividad1",
+            "Redesenho de etiquetas, embalagens e recipientes": "Actividad2",
+            "Investimento em maquinário": "Actividad3",
+            "Investimento em fontes de energia": "Actividad4",
+            "Investimento em infraestrutura": "Actividad5",
+            "Investimento em treinamento": "Actividad6",
+            "Melhoria da comunicação com clientes": "Actividad7",
+            "Cumprimento de normas ecológicas": "Actividad8"
         };
 
         for (const atividade of empresa.atividades_geradas) {
