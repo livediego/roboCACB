@@ -419,6 +419,7 @@ app.post('/executar', async (req, res) => {
 
     let browser;
     const inicio = new Date();
+    let responseSent = false;
 
     function formatDuration(ms) {
         const s = Math.floor(ms / 1000);
@@ -436,6 +437,7 @@ app.post('/executar', async (req, res) => {
         const { empresa, credenciais, isProd, questionarios, excluir } = req.body;
 
         if (!empresa || !credenciais) {
+            responseSent = true;
             return res.status(400).json({ error: 'Dados incompletos' });
         }
 
@@ -536,6 +538,7 @@ app.post('/executar', async (req, res) => {
         console.log('Automação concluída com sucesso!');
         console.log(`⏲️ Encerramento: ${fim.toLocaleString('pt-BR')} — Tempo gasto: ${formatDuration(durMs)} (${durMs} ms)`);
 
+        responseSent = true;
         res.json({
             success: true,
             message: 'Automação concluída com sucesso',
@@ -551,15 +554,23 @@ app.post('/executar', async (req, res) => {
         const durMsErr = fimErr - inicio;
         console.error(error);
         console.log(`⏲️ Encerramento (erro): ${fimErr.toLocaleString('pt-BR')} — Tempo gasto: ${formatDuration(durMsErr)} (${durMsErr} ms)`);
-        res.status(500).json({
-            error: error.message,
-            inicio: inicio.toISOString(),
-            fim: fimErr.toISOString(),
-            duracao_ms: durMsErr,
-            duracao_hms_ms: formatDuration(durMsErr)
-        });
+        
+        if (!responseSent) {
+            responseSent = true;
+            res.status(500).json({
+                error: error.message,
+                inicio: inicio.toISOString(),
+                fim: fimErr.toISOString(),
+                duracao_ms: durMsErr,
+                duracao_hms_ms: formatDuration(durMsErr)
+            });
+        }
     } finally {
-        if (browser) await browser.close();
+        try {
+            if (browser) await browser.close();
+        } catch (closeError) {
+            console.error('Erro ao fechar browser:', closeError.message);
+        }
     }
 });
 
