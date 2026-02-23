@@ -486,70 +486,61 @@ app.post('/executar', async (req, res) => {
 
         for (const questionario of questionarios) {
 
-            try {
+            if (excluir) {
+                console.log(`🗑️ Excluindo questionário: ${questionario.nome} na url ${questionario.url}`);
+            } else {
+                console.log(`📝 Preenchendo questionário: ${questionario.nome} na url ${questionario.url}`);
+            }
 
-                if (excluir) {
-                    console.log(`🗑️ Excluindo questionário: ${questionario.nome} na url ${questionario.url}`);
-                } else {
-                    console.log(`📝 Preenchendo questionário: ${questionario.nome} na url ${questionario.url}`);
-                }
+            // Abrir questionário correto
+            const urlQuestionario = questionario.url;
+            if (!urlQuestionario) {
+                throw new Error("Questionário inválido");
+            }
 
-                // Abrir questionário correto
-                const urlQuestionario = questionario.url;
-                if (!urlQuestionario) {
-                    throw new Error("Questionário inválido");
-                }
+            await page.goto(urlQuestionario);
+            await page.waitForLoadState('networkidle');
 
-                await page.goto(urlQuestionario);
-                await page.waitForLoadState('networkidle');
+            if (!excluir) {
+                await cadastrarEmpresa(page, empresa);
+            }
 
-                if (!excluir) {
-                    await cadastrarEmpresa(page, empresa);
-                }
+            // Preparar questionário para preenchimento (navegar até a empresa e clicar em editar)
+            console.log('📄 Indo para última página');
+            await page.locator('.dx-page-indexes .dx-page').last().click();
+            await wait(page, 2000);
+            const linhaEmpresa = await buscarEmpresaNaGrid(page, empresa.nome_empresa);
 
-                // Preparar questionário para preenchimento (navegar até a empresa e clicar em editar)
-                console.log('📄 Indo para última página');
-                await page.locator('.dx-page-indexes .dx-page').last().click();
+            if (!excluir) {
+                await linhaEmpresa.locator('.dx-link-edit').click();
                 await wait(page, 2000);
-                const linhaEmpresa = await buscarEmpresaNaGrid(page, empresa.nome_empresa);
 
-                if (!excluir) {
-                    await linhaEmpresa.locator('.dx-link-edit').click();
-                    await wait(page, 2000);
-
-                    switch (questionario.nome) {
-                        case "11OE":
-                            await preencherQuestionario11OE(page, empresa);
-                            break;
-                        case "12OE":
-                            await preencherQuestionario12OE(page, empresa);
-                            break;
-                        case "12":
-                            await preencherQuestionario12(page, empresa);
-                            break;
-                        case "13":
-                            await preencherQuestionario13(page, empresa);
-                            break;
-                        case "14":
-                            await preencherQuestionario14(page, empresa);
-                            break;
-                    }
-
-                    // Fazer upload do PDF para o questionário
-                    await linhaEmpresa.locator('.dx-icon-doc').click();
-                    await wait(page, 2000);
-                    await uploadPDF(page, empresa);
-                } else {                    
-                    await linhaEmpresa.locator('.dx-link-delete').click();
-                    await page.getByRole('button', { name: 'Sim' }).click();
-                    await wait(page, 2000);
+                switch (questionario.nome) {
+                    case "11OE":
+                        await preencherQuestionario11OE(page, empresa);
+                        break;
+                    case "12OE":
+                        await preencherQuestionario12OE(page, empresa);
+                        break;
+                    case "12":
+                        await preencherQuestionario12(page, empresa);
+                        break;
+                    case "13":
+                        await preencherQuestionario13(page, empresa);
+                        break;
+                    case "14":
+                        await preencherQuestionario14(page, empresa);
+                        break;
                 }
-            } catch (err) {
 
-                console.error(`❌ Erro no questionário ${questionario.nome}:`, err.message);
-                console.log("➡️ Tentando próximo questionário...");
-                continue;
-
+                // Fazer upload do PDF para o questionário
+                await linhaEmpresa.locator('.dx-icon-doc').click();
+                await wait(page, 2000);
+                await uploadPDF(page, empresa);
+            } else {
+                await linhaEmpresa.locator('.dx-link-delete').click();
+                await page.getByRole('button', { name: 'Sim' }).click();
+                await wait(page, 2000);
             }
         }
 
@@ -558,7 +549,6 @@ app.post('/executar', async (req, res) => {
         console.log('Automação concluída com sucesso!');
         console.log(`⏲️ Encerramento: ${fim.toLocaleString('pt-BR')} — Tempo gasto: ${formatDuration(durMs)} (${durMs} ms)`);
 
-        responseSent = true;
         res.json({
             success: true,
             message: 'Automação concluída com sucesso',
@@ -574,23 +564,15 @@ app.post('/executar', async (req, res) => {
         const durMsErr = fimErr - inicio;
         console.error(error);
         console.log(`⏲️ Encerramento (erro): ${fimErr.toLocaleString('pt-BR')} — Tempo gasto: ${formatDuration(durMsErr)} (${durMsErr} ms)`);
-
-        if (!responseSent) {
-            responseSent = true;
-            res.status(500).json({
-                error: error.message,
-                inicio: inicio.toISOString(),
-                fim: fimErr.toISOString(),
-                duracao_ms: durMsErr,
-                duracao_hms_ms: formatDuration(durMsErr)
-            });
-        }
+        res.status(500).json({
+            error: error.message,
+            inicio: inicio.toISOString(),
+            fim: fimErr.toISOString(),
+            duracao_ms: durMsErr,
+            duracao_hms_ms: formatDuration(durMsErr)
+        });
     } finally {
-        try {
-            if (browser) await browser.close();
-        } catch (closeError) {
-            console.error('Erro ao fechar browser:', closeError.message);
-        }
+        if (browser) await browser.close();
     }
 });
 
