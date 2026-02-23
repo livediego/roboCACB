@@ -73,13 +73,14 @@ async function buscarEmpresaNaGrid(page, nomeEmpresa, maxPaginas = 3) {
 
     console.log('🔎 Procurando empresa a partir da última página...');
 
+    await page.waitForSelector('.dx-page-indexes .dx-page', { timeout: 10000 });
     const paginas = page.locator('.dx-page-indexes .dx-page');
     const total = await paginas.count();
 
     for (let i = total - 1; i >= Math.max(0, total - maxPaginas); i--) {
 
         await paginas.nth(i).click();
-        await page.waitForTimeout(1500);
+        await wait(page, 2000);
 
         const linha = page.locator('.dx-data-row', { hasText: nomeEmpresa });
 
@@ -510,9 +511,6 @@ app.post('/executar', async (req, res) => {
             }
 
             // Preparar questionário para preenchimento (navegar até a empresa e clicar em editar)
-            console.log('📄 Indo para última página');
-            await page.locator('.dx-page-indexes .dx-page').last().click();
-            await wait(page, 2000);
             const linhaEmpresa = await buscarEmpresaNaGrid(page, empresa.nome_empresa);
 
             if (!excluir) {
