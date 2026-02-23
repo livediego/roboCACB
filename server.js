@@ -439,7 +439,7 @@ app.post('/executar', async (req, res) => {
         }
 
         if (excluir) {
-            console.log(`📝 Excluindo dados da empresa ${empresa.nome_empresa}`);
+            console.log(`🗑️ Excluindo dados da empresa ${empresa.nome_empresa}`);
         } else {
             console.log(`📝 Inserindo dados da empresa ${empresa.nome_empresa}`);
         }
@@ -461,9 +461,9 @@ app.post('/executar', async (req, res) => {
         for (const questionario of questionarios) {
 
             if (excluir) {
-                console.log(`Excluindo questionário: ${questionario.nome} na url ${questionario.url}`);
+                console.log(`🗑️ Excluindo questionário: ${questionario.nome} na url ${questionario.url}`);
             } else {
-                console.log(`Preenchendo questionário: ${questionario.nome} na url ${questionario.url}`);
+                console.log(`📝 Preenchendo questionário: ${questionario.nome} na url ${questionario.url}`);
             }
 
             // Abrir questionário correto
