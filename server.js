@@ -221,7 +221,8 @@ async function preencherQuestionario11OE(page, empresa) {
             "Investimento em infraestrutura": "Actividad5",
             "Investimento em treinamento": "Actividad6",
             "Melhoria da comunicação com clientes": "Actividad7",
-            "Cumprimento de normas ecológicas": "Actividad8"
+            "Cumprimento de normas ecológicas": "Actividad8",
+            "Outra": "Actividad9"
         };
 
         for (const atividade of empresa.atividades_geradas) {
