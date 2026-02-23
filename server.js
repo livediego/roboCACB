@@ -124,6 +124,10 @@ async function cadastrarEmpresa(page, empresa) {
             await opcoes.nth(setorIndex).click();
             await wait(page);
         }
+
+        if (empresa.setor_negocios_outro) {
+            await page.fill('input[id*="EmpresaSectorDetalle"]', empresa.setor_negocios_outro);
+        }
     }
 
     // Tamanho
