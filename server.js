@@ -75,8 +75,6 @@ async function cadastrarEmpresa(page, empresa) {
     await page.click(".dx-icon-add");
     await wait(page, 2000);
 
-    console.log(`📝 Preenchendo cadastro da Empresa ${empresa.nome_empresa}`);
-
     // País
     await page.click('#LPais');
     await wait(page);
@@ -434,10 +432,16 @@ app.post('/executar', async (req, res) => {
 
     try {
 
-        const { empresa, credenciais, isProd, questionarios } = req.body;
+        const { empresa, credenciais, isProd, questionarios, excluir = false } = req.body;
 
         if (!empresa || !credenciais) {
             return res.status(400).json({ error: 'Dados incompletos' });
+        }
+
+        if (excluir) {
+            console.log(`📝 Excluindo dados da empresa ${empresa.nome_empresa}`);
+        } else {
+            console.log(`📝 Inserindo dados da empresa ${empresa.nome_empresa}`);
         }
 
         browser = await chromium.launch({
@@ -448,14 +452,19 @@ app.post('/executar', async (req, res) => {
         const context = await browser.newContext();
         const page = await context.newPage();
 
-        await gerarPDF(page, empresa);
+        if (!excluir) {
+            await gerarPDF(page, empresa);
+        }
 
         await fazerLogin(page, credenciais);
 
         for (const questionario of questionarios) {
 
-            console.log(`Executando questionário: ${questionario.nome} na url ${questionario.url}`);
-
+            if (excluir) {
+                console.log(`Excluindo questionário: ${questionario.nome} na url ${questionario.url}`);
+            } else {
+                console.log(`Preenchendo questionário: ${questionario.nome} na url ${questionario.url}`);
+            }
 
             // Abrir questionário correto
             const urlQuestionario = questionario.url;
@@ -466,44 +475,51 @@ app.post('/executar', async (req, res) => {
             await page.goto(urlQuestionario);
             await page.waitForLoadState('networkidle');
 
-            await cadastrarEmpresa(page, empresa);
-
+            if (!excluir) {
+                await cadastrarEmpresa(page, empresa);
+            }
 
             // Preparar questionário para preenchimento (navegar até a empresa e clicar em editar)
             console.log('📄 Indo para última página');
             await page.locator('.dx-page-indexes .dx-page').last().click();
             await wait(page, 2000);
 
-            console.log('✏️ Editando empresa');
-            const linhaEmpresa = page.locator('.dx-data-row', { hasText: empresa.nome_empresa });
-            await linhaEmpresa.locator('.dx-link-edit').click();
-            await wait(page, 2000);
+            if (!excluir) {
+                console.log('✏️ Editando empresa');
+                const linhaEmpresa = page.locator('.dx-data-row', { hasText: empresa.nome_empresa });
+                await linhaEmpresa.locator('.dx-link-edit').click();
+                await wait(page, 2000);
 
-            switch (questionario.nome) {
-                case "11OE":
-                    await preencherQuestionario11OE(page, empresa);
-                    break;
-                case "12OE":
-                    await preencherQuestionario12OE(page, empresa);
-                    break;
-                case "12":
-                    await preencherQuestionario12(page, empresa);
-                    break;
-                case "13":
-                    await preencherQuestionario13(page, empresa);
-                    break;
-                case "14":
-                    await preencherQuestionario14(page, empresa);
-                    break;
+                switch (questionario.nome) {
+                    case "11OE":
+                        await preencherQuestionario11OE(page, empresa);
+                        break;
+                    case "12OE":
+                        await preencherQuestionario12OE(page, empresa);
+                        break;
+                    case "12":
+                        await preencherQuestionario12(page, empresa);
+                        break;
+                    case "13":
+                        await preencherQuestionario13(page, empresa);
+                        break;
+                    case "14":
+                        await preencherQuestionario14(page, empresa);
+                        break;
+                }
+
+                // Fazer upload do PDF para o questionário
+                await linhaEmpresa.locator('.dx-icon-doc').click();
+                await wait(page, 2000);
+                await uploadPDF(page, empresa);
+            } else {
+                console.log('🗑️ Excluindo empresa');
+                const linhaEmpresa = page.locator('.dx-data-row', { hasText: empresa.nome_empresa });
+                await linhaEmpresa.locator('.dx-link-delete').click();
+                await page.waitForEvent('dialog').then(dialog => dialog.accept());
+                await wait(page, 2000);
             }
-
-            // Fazer upload do PDF para o questionário
-            await linhaEmpresa.locator('.dx-icon-doc').click();
-            await wait(page, 2000);
-            await uploadPDF(page, empresa);
-
         }
-
         const fim = new Date();
         const durMs = fim - inicio;
         console.log('Automação concluída com sucesso!');
