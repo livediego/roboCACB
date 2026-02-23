@@ -69,6 +69,29 @@ async function uploadPDF(page, empresa) {
 // 🔹 PASSOS 3 A 8 (REUTILIZÁVEL PARA QUALQUER QUESTIONÁRIO)
 // ======================================================
 
+async function buscarEmpresaNaGrid(page, nomeEmpresa, maxPaginas = 3) {
+
+    console.log('🔎 Procurando empresa a partir da última página...');
+
+    const paginas = page.locator('.dx-page-indexes .dx-page');
+    const total = await paginas.count();
+
+    for (let i = total - 1; i >= Math.max(0, total - maxPaginas); i--) {
+
+        await paginas.nth(i).click();
+        await page.waitForTimeout(1500);
+
+        const linha = page.locator('.dx-data-row', { hasText: nomeEmpresa });
+
+        if (await linha.count()) {
+            console.log(`✅ Empresa encontrada na página índice ${i}`);
+            return linha;
+        }
+    }
+
+    throw new Error(`Empresa "${nomeEmpresa}" não encontrada nas últimas ${maxPaginas} páginas.`);
+}
+
 async function cadastrarEmpresa(page, empresa) {
 
     console.log('➕ Clicando no botão +');
@@ -488,10 +511,9 @@ app.post('/executar', async (req, res) => {
                 console.log('📄 Indo para última página');
                 await page.locator('.dx-page-indexes .dx-page').last().click();
                 await wait(page, 2000);
+                const linhaEmpresa = await buscarEmpresaNaGrid(page, empresa.nome_empresa);
 
                 if (!excluir) {
-                    console.log('✏️ Editando empresa');
-                    const linhaEmpresa = page.locator('.dx-data-row', { hasText: empresa.nome_empresa });
                     await linhaEmpresa.locator('.dx-link-edit').click();
                     await wait(page, 2000);
 
@@ -517,9 +539,7 @@ app.post('/executar', async (req, res) => {
                     await linhaEmpresa.locator('.dx-icon-doc').click();
                     await wait(page, 2000);
                     await uploadPDF(page, empresa);
-                } else {
-                    console.log('🗑️ Excluindo empresa');
-                    const linhaEmpresa = page.locator('.dx-data-row', { hasText: empresa.nome_empresa });
+                } else {                    
                     await linhaEmpresa.locator('.dx-link-delete').click();
                     await page.getByRole('button', { name: 'Sim' }).click();
                     await wait(page, 2000);
@@ -554,7 +574,7 @@ app.post('/executar', async (req, res) => {
         const durMsErr = fimErr - inicio;
         console.error(error);
         console.log(`⏲️ Encerramento (erro): ${fimErr.toLocaleString('pt-BR')} — Tempo gasto: ${formatDuration(durMsErr)} (${durMsErr} ms)`);
-        
+
         if (!responseSent) {
             responseSent = true;
             res.status(500).json({
