@@ -1,3 +1,6 @@
+process.env.TEMP = 'C:\\Temp';
+process.env.TMP = 'C:\\Temp';
+
 const express = require('express');
 const { chromium } = require('playwright');
 const path = require('path');
