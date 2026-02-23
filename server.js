@@ -432,7 +432,7 @@ app.post('/executar', async (req, res) => {
 
     try {
 
-        const { empresa, credenciais, isProd, questionarios, excluir} = req.body;
+        const { empresa, credenciais, isProd, questionarios, excluir } = req.body;
 
         if (!empresa || !credenciais) {
             return res.status(400).json({ error: 'Dados incompletos' });
@@ -516,10 +516,11 @@ app.post('/executar', async (req, res) => {
                 console.log('🗑️ Excluindo empresa');
                 const linhaEmpresa = page.locator('.dx-data-row', { hasText: empresa.nome_empresa });
                 await linhaEmpresa.locator('.dx-link-delete').click();
-                await page.waitForEvent('dialog').then(dialog => dialog.accept());
+                await page.getByRole('button', { name: 'Sim' }).click();
                 await wait(page, 2000);
             }
         }
+
         const fim = new Date();
         const durMs = fim - inicio;
         console.log('Automação concluída com sucesso!');
