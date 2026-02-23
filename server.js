@@ -432,7 +432,7 @@ app.post('/executar', async (req, res) => {
 
     try {
 
-        const { empresa, credenciais, isProd, questionarios, excluir = false } = req.body;
+        const { empresa, credenciais, isProd, questionarios, excluir} = req.body;
 
         if (!empresa || !credenciais) {
             return res.status(400).json({ error: 'Dados incompletos' });
