@@ -1,5 +1,5 @@
-process.env.TEMP = 'C:\\Temp';
-process.env.TMP = 'C:\\Temp';
+process.env.TEMP = require('os').tmpdir();
+process.env.TMP = require('os').tmpdir();
 
 const express = require('express');
 const { chromium } = require('playwright');
@@ -72,7 +72,7 @@ async function uploadPDF(page, empresa) {
 // 🔹 PASSOS 3 A 8 (REUTILIZÁVEL PARA QUALQUER QUESTIONÁRIO)
 // ======================================================
 
-async function buscarEmpresaNaGrid(page, nomeEmpresa, maxPaginas = 3) {
+async function buscarEmpresaNaGrid(page, nomeEmpresa, maxPaginas = 2) {
 
     console.log('🔎 Procurando empresa a partir da última página...');
 
@@ -184,8 +184,6 @@ async function cadastrarEmpresa(page, empresa) {
             await wait(page);
         }
     }
-
-
     console.log('💾 Salvando cadastro');
     await page.locator('.dx-button').filter({ hasText: 'Guardar' }).click();
     await wait(page, 2000);
