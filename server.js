@@ -216,7 +216,7 @@ async function preencherQuestionario11OE(page, empresa) {
         ...(empresa.boas_praticas_uso_materiais || []),
         ...(empresa.boas_praticas_processos_cultura || []),
         ...(empresa.boas_praticas_projeto || [])
-        
+
     ].join(';\n');
 
     await page.fill('textarea[id*="Descripcion"]', descricao);
@@ -448,8 +448,31 @@ async function preencherQuestionario14(page, empresa) {
 
 app.post('/executar', async (req, res) => {
 
+    res.status(202).json({
+        accepted: true,
+        message: "Execução iniciada"
+    });
+
     let browser;
     const inicio = new Date();
+
+    res.on('finish', () => {
+        console.log(
+            '✅ RESPOSTA ENTREGUE ao cliente em',
+            Date.now() - inicio,
+            'ms'
+        );
+    });
+
+    res.on('close', () => {
+        console.log(
+            '🔥 CLIENTE DESCONECTOU após',
+            Date.now() - inicio,
+            'ms'
+        );
+    });
+
+
     let responseSent = false;
 
     function formatDuration(ms) {
