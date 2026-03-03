@@ -216,7 +216,9 @@ async function preencherQuestionario11OE(page, empresa) {
         ...(empresa.boas_praticas_reducao_agua || []),
         ...(empresa.boas_praticas_gestao_residuos || []),
         ...(empresa.boas_praticas_uso_materiais || []),
-        ...(empresa.boas_praticas_processos_cultura || [])
+        ...(empresa.boas_praticas_processos_cultura || []),
+        ...(empresa.boas_praticas_projeto || [])
+        
     ].join(';\n');
 
     await page.fill('textarea[id*="Descripcion"]', descricao);
