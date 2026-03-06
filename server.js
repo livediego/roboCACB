@@ -466,23 +466,6 @@ app.post('/executar', async (req, res) => {
     let browser;
     const inicio = new Date();
 
-    res.on('finish', () => {
-        console.log(
-            '✅ RESPOSTA ENTREGUE ao cliente em',
-            Date.now() - inicio,
-            'ms'
-        );
-    });
-
-    res.on('close', () => {
-        console.log(
-            '🔥 CLIENTE DESCONECTOU após',
-            Date.now() - inicio,
-            'ms'
-        );
-    });
-
-
     let responseSent = false;
 
     function formatDuration(ms) {
@@ -550,7 +533,7 @@ app.post('/executar', async (req, res) => {
             const linhaEmpresa = await buscarEmpresaNaGrid(page, empresa.nome_empresa);
 
             if (!excluir) {
-                await linhaEmpresa.locator('.dx-link-edit').click();
+                await linhaEmpresa.locator('.dx-link-edit').first().click();
                 await wait(page, 2000);
 
                 switch (questionario.nome) {
@@ -572,11 +555,11 @@ app.post('/executar', async (req, res) => {
                 }
 
                 // Fazer upload do PDF para o questionário
-                await linhaEmpresa.locator('.dx-icon-doc').click();
+                await linhaEmpresa.locator('.dx-icon-doc').first().click();
                 await wait(page, 2000);
                 await uploadPDF(page, empresa);
             } else {
-                await linhaEmpresa.locator('.dx-link-delete').click();
+                await linhaEmpresa.locator('.dx-link-delete').first().click();
                 await page.getByRole('button', { name: 'Sim' }).click();
                 await wait(page, 2000);
             }
@@ -587,7 +570,7 @@ app.post('/executar', async (req, res) => {
         console.log('Automação concluída com sucesso!');
         console.log(`⏲️ Encerramento: ${fim.toLocaleString('pt-BR')} — Tempo gasto: ${formatDuration(durMs)} (${durMs} ms)`);
 
-        res.json({
+        /*res.json({
             success: true,
             message: 'Automação concluída com sucesso',
             empresa: empresa.nome_empresa,
@@ -595,7 +578,7 @@ app.post('/executar', async (req, res) => {
             fim: fim.toISOString(),
             duracao_ms: durMs,
             duracao_hms_ms: formatDuration(durMs)
-        });
+        });*/
 
     } catch (error) {
         const fimErr = new Date();
