@@ -1,5 +1,16 @@
-process.env.TEMP = require('os').tmpdir();
-process.env.TMP = require('os').tmpdir();
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
+
+const TEMP_DIR = path.join(__dirname, '.tmp');
+
+if (!fs.existsSync(TEMP_DIR)) {
+  fs.mkdirSync(TEMP_DIR, { recursive: true });
+}
+
+process.env.TEMP = TEMP_DIR;
+process.env.TMP = TEMP_DIR;
+process.env.TMPDIR = TEMP_DIR;
 
 const express = require('express');
 const { chromium } = require('playwright');
