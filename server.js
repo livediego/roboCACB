@@ -5,7 +5,7 @@ const path = require('path');
 const TEMP_DIR = path.join(__dirname, '.tmp');
 
 if (!fs.existsSync(TEMP_DIR)) {
-  fs.mkdirSync(TEMP_DIR, { recursive: true });
+    fs.mkdirSync(TEMP_DIR, { recursive: true });
 }
 
 process.env.TEMP = TEMP_DIR;
@@ -436,10 +436,10 @@ async function processarQuestionario(browser, questionario, empresa, credenciais
             switch (questionario.nome) {
                 case "11OE": await preencherQuestionario11OE(page, empresa); break;
                 case "12OE": await preencherQuestionario12OE(page, empresa); break;
-                case "12":   await preencherQuestionario12(page, empresa);   break;
-                case "13":   await preencherQuestionario13(page, empresa);   break;
-                case "14":   await preencherQuestionario14(page, empresa);   break;
-                default:     throw new Error(`Questionário desconhecido: ${questionario.nome}`);
+                case "12": await preencherQuestionario12(page, empresa); break;
+                case "13": await preencherQuestionario13(page, empresa); break;
+                case "14": await preencherQuestionario14(page, empresa); break;
+                default: throw new Error(`Questionário desconhecido: ${questionario.nome}`);
             }
 
             await linhaEmpresa.locator('.dx-icon-doc').first().click();
@@ -500,11 +500,33 @@ app.post('/executar', async (req, res) => {
             }
         }
 
-        // ✅ Disparar todos os questionários em paralelo
-        const resultados = await Promise.allSettled(
-            questionarios.map(questionario =>
+        const CONCORRENCIA = 2;
+
+        async function executarComLimite(lista, limite, tarefa) {
+            const resultados = [];
+            const executando = [];
+
+            for (const item of lista) {
+                const p = Promise.resolve().then(() => tarefa(item));
+                resultados.push(p);
+
+                if (limite <= lista.length) {
+                    const e = p.then(() => executando.splice(executando.indexOf(e), 1));
+                    executando.push(e);
+                    if (executando.length >= limite) {
+                        await Promise.race(executando);
+                    }
+                }
+            }
+
+            return Promise.allSettled(resultados);
+        }
+
+        const resultados = await executarComLimite(
+            questionarios,
+            CONCORRENCIA,
+            (questionario) =>
                 processarQuestionario(browser, questionario, empresa, credenciais, excluir)
-            )
         );
 
         // Consolidar resultados
