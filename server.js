@@ -430,7 +430,7 @@ async function processarQuestionario(browser, questionario, empresa, credenciais
         const linhaEmpresa = await buscarEmpresaNaGrid(page, empresa.nome_empresa);
 
         if (!excluir) {
-            await linhaEmpresa.locator('.dx-link-edit').click();
+            await linhaEmpresa.locator('.dx-link-edit').first().click();
             await wait(page, 2000);
 
             switch (questionario.nome) {
@@ -442,11 +442,11 @@ async function processarQuestionario(browser, questionario, empresa, credenciais
                 default:     throw new Error(`Questionário desconhecido: ${questionario.nome}`);
             }
 
-            await linhaEmpresa.locator('.dx-icon-doc').click();
+            await linhaEmpresa.locator('.dx-icon-doc').first().click();
             await wait(page, 2000);
             await uploadPDF(page, empresa);
         } else {
-            await linhaEmpresa.locator('.dx-link-delete').click();
+            await linhaEmpresa.locator('.dx-link-delete').first().click();
             await page.getByRole('button', { name: 'Sim' }).click();
             await wait(page, 2000);
         }
