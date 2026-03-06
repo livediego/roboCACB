@@ -82,7 +82,7 @@ async function uploadPDF(page, empresa) {
 
 async function buscarEmpresaNaGrid(page, nomeEmpresa, maxPaginas = 2) {
     console.log('🔎 Procurando empresa a partir da última página...');
-    await page.waitForSelector('.dx-page-indexes .dx-page', { timeout: 10000 });
+    //await page.waitForSelector('.dx-page-indexes .dx-page', { timeout: 10000 });
     const paginas = page.locator('.dx-page-indexes .dx-page');
     const total = await paginas.count();
 
