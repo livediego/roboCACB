@@ -14,7 +14,6 @@ process.env.TMPDIR = TEMP_DIR;
 
 const express = require('express');
 const { chromium } = require('playwright');
-const path = require('path');
 
 const app = express();
 app.use(express.json({ limit: '10mb' }));
