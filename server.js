@@ -23,6 +23,7 @@ app.use(express.json({ limit: '10mb' }));
 // ======================================================
 
 const URL_LOGIN = 'https://www.alinvestverde-c1-monitoreo.com/Admin/Login?ReturnUrl=%2FHome';
+const WEBHOOK_BASE44_URL = 'https://alinvestverdecacb.com.br/functions/executorWebhook';
 
 // ======================================================
 // 🔹 UTILITÁRIOS
@@ -530,9 +531,15 @@ app.post('/executar', async (req, res) => {
             }
 
             // Preparar questionário para preenchimento (navegar até a empresa e clicar em editar)
-            const linhaEmpresa = await buscarEmpresaNaGrid(page, empresa.nome_empresa);
 
             if (!excluir) {
+                console.log('🔎 Procurando empresa na última página...');
+    
+                const lastPageButton = page.locator('.dx-page-indexes .dx-page').last();
+                await lastPageButton.click();
+                await wait(page, 2000);
+
+                const linhaEmpresa = page.locator('.dx-data-row', {hasText: empresa.nome_empresa});   
                 await linhaEmpresa.locator('.dx-link-edit').first().click();
                 await wait(page, 2000);
 
@@ -555,10 +562,13 @@ app.post('/executar', async (req, res) => {
                 }
 
                 // Fazer upload do PDF para o questionário
+            
                 await linhaEmpresa.locator('.dx-icon-doc').first().click();
                 await wait(page, 2000);
                 await uploadPDF(page, empresa);
             } else {
+                const linhaEmpresa = await buscarEmpresaNaGrid(page, empresa.nome_empresa);
+   
                 await linhaEmpresa.locator('.dx-link-delete').first().click();
                 await page.getByRole('button', { name: 'Sim' }).click();
                 await wait(page, 2000);
@@ -570,28 +580,38 @@ app.post('/executar', async (req, res) => {
         console.log('Automação concluída com sucesso!');
         console.log(`⏲️ Encerramento: ${fim.toLocaleString('pt-BR')} — Tempo gasto: ${formatDuration(durMs)} (${durMs} ms)`);
 
-        /*res.json({
-            success: true,
-            message: 'Automação concluída com sucesso',
-            empresa: empresa.nome_empresa,
-            inicio: inicio.toISOString(),
-            fim: fim.toISOString(),
-            duracao_ms: durMs,
-            duracao_hms_ms: formatDuration(durMs)
-        });*/
+	//Envia o webhook de sucesso para o Base44
+        await fetch(WEBHOOK_BASE44_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                empresa_id: empresa.id,
+                status: 'sucesso',
+                message: 'Automação concluída com sucesso',
+                duracao_ms: durMs,
+            }),
+        });
+        console.log('Webhook de sucesso enviado para o Base44.');
 
     } catch (error) {
         const fimErr = new Date();
         const durMsErr = fimErr - inicio;
         console.error(error);
         console.log(`⏲️ Encerramento (erro): ${fimErr.toLocaleString('pt-BR')} — Tempo gasto: ${formatDuration(durMsErr)} (${durMsErr} ms)`);
-        res.status(500).json({
-            error: error.message,
-            inicio: inicio.toISOString(),
-            fim: fimErr.toISOString(),
-            duracao_ms: durMsErr,
-            duracao_hms_ms: formatDuration(durMsErr)
+	
+	//Envia o webhook de falha para o Base44
+        await fetch(WEBHOOK_BASE44_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                empresa_id: req.body.empresa?.id, // Tenta pegar o ID da empresa do corpo da requisição
+                status: 'falha',
+                error: error.message,
+                duracao_ms: durMsErr,
+            }),
         });
+        console.log('Webhook de falha enviado para o Base44.');
+
     } finally {
         if (browser) await browser.close();
     }
