@@ -95,6 +95,8 @@ async function buscarEmpresaNaGrid(page, nomeEmpresa, maxPaginas = 2) {
 
         await paginas.nth(i).click();
         await wait(page, 2000);
+        
+        console.log(`Procurando na página página índice ${i}...`);
 
         const linha = page.locator('.dx-data-row', { hasText: nomeEmpresa });
 
