@@ -11,7 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "express": "^5.2.1",
-    "playwright": "^1.58.2",
-    "uuid": "^13.0.0"
+    "playwright": "^1.59.1",
+    "uuid": "^14.0.0"
   }
 }
