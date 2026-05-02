@@ -87,12 +87,13 @@ async function buscarEmpresaNaGrid(page, nomeEmpresa, maxPaginas = 2) {
 
     console.log('🔎 Procurando empresa a partir da última página...');
 
-    //const paginas = page.locator('.dx-page-indexes .dx-page');
     await page.waitForSelector('.dx-page-indexes .dx-page', { timeout: 10000 });
-    const lastPage = await page.locator('.dx-page-indexes .dx-page').last().innerText();
-    console.log("última página:", lastPage);
+    const paginas = await page.locator('.dx-page-indexes .dx-page');
+    const lastPage = paginas.last().innerText();
+    console.log("Última página:", lastPage);
     const total = parseInt(lastPage, 10);
     const primeiraPagina = Math.max(0, total - maxPaginas) + 1;
+    console.log("Primeira página:", primeiraPagina);
 
     for (let i = total - 1; i >= primeiraPagina; i--) {
 
@@ -110,7 +111,7 @@ async function buscarEmpresaNaGrid(page, nomeEmpresa, maxPaginas = 2) {
         }
     }
 
-    throw new Error(`Empresa "${nomeEmpresa}" não encontrada entre as páginas "${primeiraPagina}" e "${total}"`);
+    throw new Error(`Empresa ${nomeEmpresa} não encontrada entre as páginas ${primeiraPagina} e ${total}`);
 }
 
 async function cadastrarEmpresa(page, empresa) {
