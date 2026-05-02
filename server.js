@@ -89,7 +89,7 @@ async function buscarEmpresaNaGrid(page, nomeEmpresa, maxPaginas = 2) {
 
     //const paginas = page.locator('.dx-page-indexes .dx-page');
     await page.waitForSelector('.dx-page-indexes .dx-page', { timeout: 10000 });
-    const lastPage = page.locator('.dx-page-indexes .dx-page').last().innerText();
+    const lastPage = await page.locator('.dx-page-indexes .dx-page').last().innerText();
     console.log("última página:", lastPage);
     const total = parseInt(lastPage, 10);
     const primeiraPagina = Math.max(0, total - maxPaginas) + 1;
@@ -106,6 +106,7 @@ async function buscarEmpresaNaGrid(page, nomeEmpresa, maxPaginas = 2) {
         if (await linha.count()) {
             console.log(`✅ Empresa encontrada na página índice ${i}`);
             return linha;
+
         }
     }
 
