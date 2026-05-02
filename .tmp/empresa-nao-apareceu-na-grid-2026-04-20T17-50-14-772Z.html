@@ -1,0 +1,1238 @@
+<!DOCTYPE html><html><head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="author" content="Transformatec">
+
+    <title>AL-INVEST Verde</title>            
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.10.1/polyfill.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/3.8.0/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+    
+
+    <script src="https://unpkg.com/devextreme-quill/dist/dx-quill.min.js"></script>
+
+    <link rel="stylesheet" href="/css/devextreme/dx.generic.CustomThemeAlInvest.css?v=2R9ZfkNRCI1f6oIesJBv55W7RJ6mYMnOsypkY6Bya_M">
+    <link rel="stylesheet" href="/css/main/css/site.css?v=ZoQXAldcBNGq5vUHqm_z8rkQ9MfnB591jg8oyJr8oWg">
+    <link rel="stylesheet" href="/css/main/Noticias.css?v=HWloLwg8aPN1HJtsVnaiasbw96WR4WhXVmsAYhk1bf4">
+    <link rel="stylesheet" href="/css/main/Eventos.css?v=EGmDrIcaUwb_nOhXxKLWf0RZifUArCJYW4MaxsdyUbU">
+    <link rel="stylesheet" href="/css/main/Tableros.css?v=Ndq13ZGhvELcBdmVg0H54uh-86_Zs-8meaY_P_-Iy7E">
+    <link rel="stylesheet" href="/css/login/bread.css?v=fdTJa0ydRTAise20mm0th1XVTFAan0C6a53MGWtFWPY">
+
+    <link href="/css/main/ikr.notification.css" rel="stylesheet">
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.css" integrity="sha512-C4k/QrN4udgZnXStNFS5osxdhVECWyhMsK1pnlk+LkC7yJGCqoYxW4mH3/ZXLweODyzolwdWSqmmadudSHMRLA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+
+    <!-- font-awesome icon cdn -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+    <script src="/js/vendor.js?v=8A48PRnDQNA35RS7QhJvpPhRxRw1bJPrdovMu2nNvG0"></script>
+    <script src="/js/devextreme/localization/dx.messages.es.js"></script>
+    <script src="/js/devextreme/localization/dx.messages.en.js"></script>
+    <script src="/js/devextreme/localization/dx.messages.pt.js"></script>
+    <script src="/js/notifications/ikr.notificationplugin.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js" integrity="sha512-6lplKUSl86rUVprDIjiW8DuOniNX8UDoRATqZSds/7t6zCQZfaCe3e5zcGaQwxa8Kpn5RTM9Fvl3X2lLV4grPQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.js" integrity="sha512-LjPH94gotDTvKhoxqvR5xR2Nur8vO5RKelQmG52jlZo7SwI5WLYwDInPn1n8H9tR0zYqTqfNxWszUEy93cHHwg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+    
+<script type="text/javascript">!function(T,l,y){var S=T.location,k="script",D="instrumentationKey",C="ingestionendpoint",I="disableExceptionTracking",E="ai.device.",b="toLowerCase",w="crossOrigin",N="POST",e="appInsightsSDK",t=y.name||"appInsights";(y.name||T[e])&&(T[e]=t);var n=T[t]||function(d){var g=!1,f=!1,m={initialize:!0,queue:[],sv:"5",version:2,config:d};function v(e,t){var n={},a="Browser";return n[E+"id"]=a[b](),n[E+"type"]=a,n["ai.operation.name"]=S&&S.pathname||"_unknown_",n["ai.internal.sdkVersion"]="javascript:snippet_"+(m.sv||m.version),{time:function(){var e=new Date;function t(e){var t=""+e;return 1===t.length&&(t="0"+t),t}return e.getUTCFullYear()+"-"+t(1+e.getUTCMonth())+"-"+t(e.getUTCDate())+"T"+t(e.getUTCHours())+":"+t(e.getUTCMinutes())+":"+t(e.getUTCSeconds())+"."+((e.getUTCMilliseconds()/1e3).toFixed(3)+"").slice(2,5)+"Z"}(),iKey:e,name:"Microsoft.ApplicationInsights."+e.replace(/-/g,"")+"."+t,sampleRate:100,tags:n,data:{baseData:{ver:2}}}}var h=d.url||y.src;if(h){function a(e){var t,n,a,i,r,o,s,c,u,p,l;g=!0,m.queue=[],f||(f=!0,t=h,s=function(){var e={},t=d.connectionString;if(t)for(var n=t.split(";"),a=0;a<n.length;a++){var i=n[a].split("=");2===i.length&&(e[i[0][b]()]=i[1])}if(!e[C]){var r=e.endpointsuffix,o=r?e.location:null;e[C]="https://"+(o?o+".":"")+"dc."+(r||"services.visualstudio.com")}return e}(),c=s[D]||d[D]||"",u=s[C],p=u?u+"/v2/track":d.endpointUrl,(l=[]).push((n="SDK LOAD Failure: Failed to load Application Insights SDK script (See stack for details)",a=t,i=p,(o=(r=v(c,"Exception")).data).baseType="ExceptionData",o.baseData.exceptions=[{typeName:"SDKLoadFailed",message:n.replace(/\./g,"-"),hasFullStack:!1,stack:n+"\nSnippet failed to load ["+a+"] -- Telemetry is disabled\nHelp Link: https://go.microsoft.com/fwlink/?linkid=2128109\nHost: "+(S&&S.pathname||"_unknown_")+"\nEndpoint: "+i,parsedStack:[]}],r)),l.push(function(e,t,n,a){var i=v(c,"Message"),r=i.data;r.baseType="MessageData";var o=r.baseData;return o.message='AI (Internal): 99 message:"'+("SDK LOAD Failure: Failed to load Application Insights SDK script (See stack for details) ("+n+")").replace(/\"/g,"")+'"',o.properties={endpoint:a},i}(0,0,t,p)),function(e,t){if(JSON){var n=T.fetch;if(n&&!y.useXhr)n(t,{method:N,body:JSON.stringify(e),mode:"cors"});else if(XMLHttpRequest){var a=new XMLHttpRequest;a.open(N,t),a.setRequestHeader("Content-type","application/json"),a.send(JSON.stringify(e))}}}(l,p))}function i(e,t){f||setTimeout(function(){!t&&m.core||a()},500)}var e=function(){var n=l.createElement(k);n.src=h;var e=y[w];return!e&&""!==e||"undefined"==n[w]||(n[w]=e),n.onload=i,n.onerror=a,n.onreadystatechange=function(e,t){"loaded"!==n.readyState&&"complete"!==n.readyState||i(0,t)},n}();y.ld<0?l.getElementsByTagName("head")[0].appendChild(e):setTimeout(function(){l.getElementsByTagName(k)[0].parentNode.appendChild(e)},y.ld||0)}try{m.cookie=l.cookie}catch(p){}function t(e){for(;e.length;)!function(t){m[t]=function(){var e=arguments;g||m.queue.push(function(){m[t].apply(m,e)})}}(e.pop())}var n="track",r="TrackPage",o="TrackEvent";t([n+"Event",n+"PageView",n+"Exception",n+"Trace",n+"DependencyData",n+"Metric",n+"PageViewPerformance","start"+r,"stop"+r,"start"+o,"stop"+o,"addTelemetryInitializer","setAuthenticatedUserContext","clearAuthenticatedUserContext","flush"]),m.SeverityLevel={Verbose:0,Information:1,Warning:2,Error:3,Critical:4};var s=(d.extensionConfig||{}).ApplicationInsightsAnalytics||{};if(!0!==d[I]&&!0!==s[I]){var c="onerror";t(["_"+c]);var u=T[c];T[c]=function(e,t,n,a,i){var r=u&&u(e,t,n,a,i);return!0!==r&&m["_"+c]({message:e,url:t,lineNumber:n,columnNumber:a,error:i}),r},d.autoExceptionInstrumented=!0}return m}(y.cfg);function a(){y.onInit&&y.onInit(n)}(T[t]=n).queue&&0===n.queue.length?(n.queue.push(a),n.trackPageView({})):a()}(window,document,{
+src: "https://js.monitor.azure.com/scripts/b/ai.2.min.js", // The SDK URL Source
+crossOrigin: "anonymous", 
+cfg: { // Application Insights Configuration
+    connectionString: 'InstrumentationKey=efdad552-9f63-42a1-87cd-6824f8c4c2c4;IngestionEndpoint=https://centralus-2.in.applicationinsights.azure.com/;LiveEndpoint=https://centralus.livediagnostics.monitor.azure.com/'
+}});</script><script src="https://js.monitor.azure.com/scripts/b/ai.2.min.js" crossorigin="anonymous"></script></head>
+
+
+<body class="dx-viewport dx-device-desktop dx-device-generic dx-theme-generic dx-theme-generic-typography dx-color-scheme-softblue">
+
+     
+    <header class="header">
+        <div class="header-container">
+            <div class="row">
+                <div class="col-sm-12 col-md-2 col-lg-2 col-xl-2">
+                    <a class="logo" href="/">
+                        <div class="detailsh">
+                            <img class="help" src="/css/login/images/logosggaiveueperfil.jpg" alt="" width="100%">
+                        </div>
+
+                    </a>
+
+                </div>
+                <div class="col-sm-12 col-md-7 col-lg-7 col-xl-7 pt-3">
+                    <script>DevExpress.config({"serverDecimalSeparator":","});DevExpress.aspnet.setTemplateEngine();</script><div id="tbProyecto" class="dx-show-invalid-badge dx-textbox dx-texteditor dx-editor-outlined dx-state-readonly dx-widget" style="width: 600px;"><div class="dx-texteditor-container"><div class="dx-texteditor-input-container"><input autocomplete="off" class="dx-texteditor-input" type="text" readonly="" aria-readonly="true" spellcheck="false" tabindex="0" role="textbox" style=""><div data-dx_placeholder="" class="dx-placeholder dx-state-invisible"></div></div><div class="dx-texteditor-buttons-container"><div></div></div></div></div><script>DevExpress.utils.readyCallbacks.add((function($){$("#tbProyecto").dxTextBox({"width":600.0,"readOnly":true,"value":"Proyecto: AL INVEST Verde Socio CACB (ejecucion)"});}).bind(this, jQuery));</script>
+                </div>
+
+                
+
+                <div class="col-sm-12 col-md-3 col-lg-3 col-xl-3">
+
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="header-buttons" style="margin-top: 20px;">
+                            <div id="NotificaContainer" style="position: relative;"><div class="ikrNoti_Counter" style="opacity: 1; top: -2px;">0</div><div class="ikrNoti_Button"><center><i class="fa fa-bell"></i></center></div><div class="ikrNotifications"><h3>Notificaciones (<span class="notiCounterOnHead">0</span>)</h3><div class="ikrNotificationItems"></div><div class="ikrSeeAll"><a href="#">Ver todas</a></div></div></div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="header-buttons" style="margin-top: 10px;">
+                                <div id="devextreme36" role="group" class="dx-buttongroup dx-widget" tabindex="0"><div class="dx-buttongroup-wrapper dx-widget dx-collection"><div class="dx-widget dx-button dx-button-mode-outlined dx-button-success dx-button-has-icon dx-item dx-buttongroup-item dx-item-content dx-buttongroup-item-content dx-buttongroup-first-item dx-shape-standard" role="button" aria-label="mediumiconslayout" title="Projetos" aria-selected="false"><div class="dx-button-content"><i class="dx-icon dx-icon-mediumiconslayout"></i></div></div><div class="dx-widget dx-button dx-button-mode-outlined dx-button-normal dx-button-has-icon dx-item dx-buttongroup-item dx-item-content dx-buttongroup-item-content dx-shape-standard" role="button" aria-label="user" title="Do utilizador" aria-selected="false"><div class="dx-button-content"><i class="dx-icon dx-icon-user"></i></div></div><div class="dx-widget dx-button dx-button-mode-outlined dx-button-success dx-button-has-icon dx-item dx-buttongroup-item dx-item-content dx-buttongroup-item-content dx-buttongroup-last-item dx-shape-standard" role="button" aria-label="pinright" title="Sair" aria-selected="false"><div class="dx-button-content"><i class="dx-icon dx-icon-pinright"></i></div></div></div></div><script>DevExpress.utils.readyCallbacks.add((function($){$("#devextreme36").dxButtonGroup({"keyExpr":"alignment","stylingMode":"outlined","items":[{"icon":"mediumiconslayout","hint":"Projetos","type":"success"},{"icon":"user","hint":"Do utilizador"},{"icon":"pinright","hint":"Sair","type":"success"}],"selectedItemKeys":["left"],"onItemClick":buttonGroup_ItemClick});}).bind(this, jQuery));</script>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+
+                </div>
+
+            </div>
+                        
+
+            
+
+            
+
+
+        </div>
+    </header>
+
+
+     <div class="body">
+        
+         
+<div class="demo-menu">
+    <div id="demo-menu-tree"></div>   
+    
+ <div id="simple-treeview" class="dx-widget dx-collection dx-treeview" role="tree" style="width: 200px;" tabindex="0"><div class="dx-scrollable dx-visibility-change-handler dx-scrollable-vertical dx-scrollable-simulated"><div class="dx-scrollable-wrapper"><div class="dx-scrollable-container"><div class="dx-scrollable-content" style="left: 0px; top: 0px; transform: none;"><ul class="dx-treeview-node-container" role="group"><li class="dx-treeview-node dx-treeview-item-without-checkbox" data-item-id="5" role="treeitem" aria-label="Projetos" aria-expanded="false" aria-level="1" aria-selected="false"><div class="dx-item dx-treeview-item"><div class="dx-item-content dx-treeview-item-content">
+            <div>
+                <div>Projetos</div>
+            </div>
+        </div></div><div class="dx-treeview-toggle-item-visibility"></div></li><li class="dx-treeview-node dx-treeview-item-without-checkbox" data-item-id="24" role="treeitem" aria-label="Gestão financeira" aria-expanded="false" aria-level="1" aria-selected="false"><div class="dx-item dx-treeview-item"><div class="dx-item-content dx-treeview-item-content">
+            <div>
+                <div>Gestão financeira</div>
+            </div>
+        </div></div><div class="dx-treeview-toggle-item-visibility"></div></li><li class="dx-treeview-node dx-treeview-item-without-checkbox" data-item-id="40" role="treeitem" aria-label="Calendário" aria-expanded="false" aria-level="1" aria-selected="false"><div class="dx-item dx-treeview-item"><div class="dx-item-content dx-treeview-item-content">
+            <div>
+                <div>Calendário</div>
+            </div>
+        </div></div><div class="dx-treeview-toggle-item-visibility"></div></li><li class="dx-treeview-node dx-treeview-item-without-checkbox" data-item-id="89" role="treeitem" aria-label="Repositório" aria-expanded="false" aria-level="1" aria-selected="false"><div class="dx-item dx-treeview-item"><div class="dx-item-content dx-treeview-item-content">
+            <div>
+                <div>Repositório</div>
+            </div>
+        </div></div><div class="dx-treeview-toggle-item-visibility"></div></li></ul></div><div class="dx-scrollable-scrollbar dx-widget dx-scrollbar-vertical dx-scrollbar-hoverable" style="display: none;"><div class="dx-scrollable-scroll dx-state-invisible" style="height: 1020px; transform: translate(0px, 0px);"><div class="dx-scrollable-scroll-content"></div></div></div></div></div></div></div><script>DevExpress.utils.readyCallbacks.add((function($){$("#simple-treeview").dxTreeView({"dataSource":{"store":DevExpress.data.AspNet.createStore({"key":"IdOpcion","loadUrl":"/MenuData/ObtieneMenu"})},"parentIdExpr":"IdOpcionPadre","keyExpr":"IdOpcion","displayExpr":"Texto","width":200.0,"onContentReady":MenuReady,"onItemClick":MenuClick,"animationEnabled":true,"dataStructure":"tree","itemsExpr":"items","itemTemplate":$("#simple-treeview-itemTemplate")});}).bind(this, jQuery));</script>
+
+
+
+</div>
+
+
+
+        <div class="demo-wrapper">
+            <div id="headerLogo">
+            </div>
+
+<ol class="breadcrumb"><li class="breadcrumb-item"><a href="Home" title="Começar">Começar</a></li><li aria-current="page" class="breadcrumb-item active">Autodeclaración Indicador 1.1 OE</li></ol>
+
+            
+            
+            <div>
+                <div class="demo-device">
+                    <div class="demo-display">
+                        <div class="demo-container">
+                            
+   
+
+
+
+<h1>Autodeclaración Indicador 1.1 OE</h1>
+
+
+
+
+<script src="/js/FileManagerMethod.js"></script>
+
+<div id="devextreme0" class="dx-overlay dx-popup dx-popover dx-widget dx-state-invisible dx-visibility-change-handler"><div class="dx-overlay-content dx-popup-normal" aria-hidden="true" style="width: 600px; height: auto;"><div class="dx-popover-arrow"></div><div class="dx-popup-content"></div></div></div><script>DevExpress.utils.readyCallbacks.add((function($){$("#devextreme0").dxPopover({"target":"#linkInstrucciones","showEvent":"mouseenter","hideEvent":"mouseleave","position":"bottom","width":600.0,"contentTemplate":$("#devextreme0-contentTemplate")});}).bind(this, jQuery));</script>
+
+
+
+<script type="text/html" id="templateInstrucciones">    <center>
+        <div style="color:#52934d; font-weight: bold">
+            <label for="Mensaje" id="linkInstrucciones">Orienta&#xE7;&#xF5;es</label>
+        </div>
+    </center>
+</script><script type="text/html" id="devextreme0-contentTemplate">
+                    Boas Pr&#xE1;ticas s&#xE3;o um procedimento estabelecido, aplicado e, se relevante, em constante&#xD;&#xA;                    aplica&#xE7;&#xE3;o em opera&#xE7;&#xF5;es comerciais&#xD;&#xA;                    Registre informa&#xE7;&#xF5;es da maneira mais precisa e oportuna&#xD;&#xA;                    Os dados registrados devem ser reais e verific&#xE1;veis                    
+                </script>
+
+<div id="devextreme1" class="dx-multiview dx-swipeable dx-tabpanel dx-widget dx-visibility-change-handler dx-collection" role="tabpanel" tabindex="-1"><div class="dx-tabpanel-tabs"><div role="tablist" class="dx-tabs dx-widget dx-visibility-change-handler dx-collection dx-tabs-expanded" tabindex="0"><div class="dx-tabs-wrapper"><div class="dx-item dx-tab dx-tab-selected" role="tab" aria-selected="true"><div class="dx-item-content dx-tab-content"><span class="dx-tab-text">Autodeclarações</span></div></div><div class="dx-item dx-tab" role="tab" aria-selected="false"><div class="dx-item-content dx-tab-content"><span class="dx-tab-text">Uploads por arquivo</span></div></div><div class="dx-item dx-tab" role="tab" aria-selected="false"><div class="dx-item-content dx-tab-content"><span class="dx-tab-text">Carregar assinatura de arquivos</span></div></div></div></div></div><div class="dx-tabpanel-container" style="margin-top: -43px; padding-top: 43px;"><div class="dx-multiview-wrapper"><div class="dx-multiview-item-container"><div class="dx-item dx-multiview-item dx-item-selected" role="tabpanel" style="transform: translate(0px, 0px);"><div class="dx-item-content dx-multiview-item-content"><div id="dx-31140741-6b83-6b7a-4ecf-51b3f8195718" class="dx-form dx-widget form-container dx-visibility-change-handler" role="form"><div class="dx-layout-manager dx-widget"><div class="dx-widget dx-collection dx-responsivebox-screen-lg dx-responsivebox" style="width: 100%; height: 100%;"><div class="dx-box-flex dx-box dx-widget dx-visibility-change-handler dx-collection" style="display: flex; flex-direction: row; width: 100%; height: 100%; justify-content: flex-start; align-items: stretch;"><div class="dx-item dx-box-item" style="display: flex; max-width: none; min-width: 0px; flex: 1 1 auto;"><div class="dx-item-content dx-box-item-content dx-root-simple-item" style="width: auto; height: auto; display: flex; flex-basis: 0px; flex-grow: 1; flex-direction: column;"><div class="dx-first-row dx-first-col dx-last-col dx-last-row dx-field-item dx-col-0 dx-field-item-optional dx-flex-layout"><div class="dx-field-item-content dx-field-item-content-location-bottom"><div id="DGData" class="dx-widget dx-visibility-change-handler" role="presentation"><div class="dx-datagrid dx-gridbase-container dx-datagrid-borders" role="grid" aria-label="Grelha de dados"><div class="dx-hidden"></div><div class="dx-hidden"></div><div class="dx-hidden"></div><div class="dx-datagrid-header-panel"><div aria-label="Data grid toolbar" class="dx-toolbar dx-widget dx-visibility-change-handler dx-collection" role="toolbar"><div class="dx-toolbar-items-container"><div class="dx-toolbar-before"></div><div class="dx-toolbar-center" style="margin: 0px 96.2px 0px 0px; float: right;"></div><div class="dx-toolbar-after"><div class="dx-state-invisible dx-item dx-toolbar-item dx-toolbar-button"><div class="dx-item-content dx-toolbar-item-content"><div class="dx-widget dx-button dx-button-mode-contained dx-button-normal dx-button-has-icon" role="button" aria-label="check" tabindex="0" title="Valide as autodeclarações nesta página."><div class="dx-button-content"><i class="dx-icon dx-icon-check"></i></div></div></div></div><div class="dx-item dx-toolbar-item dx-toolbar-button dx-toolbar-item-auto-hide dx-toolbar-text-auto-hide"><div class="dx-item-content dx-toolbar-item-content"><div class="dx-widget dx-button dx-button-mode-contained dx-button-normal dx-button-has-text dx-button-has-icon dx-datagrid-export-button" role="button" aria-label="Exportar todos os dados" tabindex="0" title="Exportar todos os dados"><div class="dx-button-content"><i class="dx-icon dx-icon-xlsxfile"></i><span class="dx-button-text">Exportar todos os dados</span></div></div></div></div><div class="dx-item dx-toolbar-item dx-toolbar-button"><div class="dx-item-content dx-toolbar-item-content"><div class="dx-widget dx-button dx-button-mode-contained dx-button-normal dx-button-has-icon" role="button" aria-label="add" tabindex="0"><div class="dx-button-content"><i class="dx-icon dx-icon-add"></i></div></div></div></div><div class="dx-toolbar-button dx-toolbar-menu-container dx-state-invisible"><div class="dx-widget dx-button dx-button-mode-contained dx-button-normal dx-button-has-icon dx-dropdownmenu dx-dropdownmenu-button" role="menubar" aria-label="overflow" tabindex="0" aria-haspopup="true" aria-expanded="false"><div class="dx-button-content"><i class="dx-icon dx-icon-overflow"></i></div></div></div></div></div></div></div><div class="dx-datagrid-headers dx-datagrid-nowrap" role="presentation"><div class="dx-datagrid-scrollable-simulated dx-datagrid-content dx-datagrid-scroll-container" role="presentation"><table class="dx-datagrid-table dx-datagrid-table-fixed" role="presentation"><colgroup><col style="width: 60px;"><col><col><col><col style="width: 250px;"></colgroup><tbody role="presentation"></tbody></table></div></div><div class="dx-datagrid-rowsview dx-datagrid-nowrap dx-empty" role="presentation" tabindex="0"><div class="dx-datagrid-content"><table class="dx-datagrid-table dx-datagrid-table-fixed" role="presentation"><colgroup><col style="width: 60px;"><col><col><col><col style="width: 250px;"></colgroup><tbody role="presentation"><tr class="dx-row dx-freespace-row dx-column-lines" role="presentation"><td class="dx-command-edit dx-command-edit-with-icons" style="text-align: center;"></td><td style="text-align: left;"></td><td style="text-align: left;"></td><td style="text-align: left;"></td><td class="dx-command-edit dx-command-edit-with-icons" style="text-align: center;"></td></tr></tbody></table></div></div><div class="dx-overlay dx-widget dx-visibility-change-handler dx-loadpanel"><div class="dx-overlay-wrapper dx-loadpanel-wrapper" data-bind="dxControlsDescendantBindings: true" style="z-index: 1501; position: absolute; width: 961.8px; height: 147.6px; left: 0px; top: 0px; transform: translate(0px, 0px); transition: all; overflow: visible;"><div class="dx-overlay-content dx-resizable dx-loadpanel-content" style="width: 200px; height: 90px; z-index: 1501; left: 0px; top: 0px; transform: translate(381px, 52px); transition: all;"><div class="dx-loadpanel-content-wrapper"><div class="dx-loadpanel-indicator dx-loadindicator dx-widget"><div class="dx-loadindicator-wrapper"><div class="dx-loadindicator-content"><div class="dx-loadindicator-icon"><div class="dx-loadindicator-segment dx-loadindicator-segment7"></div><div class="dx-loadindicator-segment dx-loadindicator-segment6"></div><div class="dx-loadindicator-segment dx-loadindicator-segment5"></div><div class="dx-loadindicator-segment dx-loadindicator-segment4"></div><div class="dx-loadindicator-segment dx-loadindicator-segment3"></div><div class="dx-loadindicator-segment dx-loadindicator-segment2"></div><div class="dx-loadindicator-segment dx-loadindicator-segment1"></div><div class="dx-loadindicator-segment dx-loadindicator-segment0"></div></div></div></div></div><div class="dx-loadpanel-message">Carregando ...</div></div></div></div></div><div class="dx-hidden"></div><div></div><div class="dx-hidden"></div><div class="dx-hidden"></div><div class="dx-datagrid-drag-header dx-datagrid-text-content dx-widget" style="display: none;"></div><div class="dx-context-menu dx-has-context-menu dx-widget dx-visibility-change-handler dx-collection" role="presentation"></div><div class="dx-header-filter-menu"></div><div></div></div></div></div></div></div></div></div></div></div></div></div></div><div class="dx-item dx-multiview-item dx-multiview-item-hidden" role="tabpanel" aria-hidden="true"><div class=""></div></div><div class="dx-item dx-multiview-item dx-multiview-item-hidden" role="tabpanel" aria-hidden="true"><div class=""></div></div></div></div></div></div><script>DevExpress.utils.readyCallbacks.add((function($){$("#devextreme1").dxTabPanel({"items":[{"title":"Autodeclarações","template":$("#gridContainer-details-tab1Template"),"tabExtras":{"proyectoIndicadorID":getIdProyectoURL}},{"title":"Uploads por arquivo","template":$("#gridContainer-details-tab2Template"),"tabExtras":{"proyectoIndicadorID":getIdProyectoURL}},{"title":"Carregar assinatura de arquivos","template":$("#gridContainer-details-tab3Template"),"tabExtras":{"proyectoIndicadorID":getIdProyectoURL}}]});}).bind(this, jQuery));</script>
+
+
+<script type="text/html" id="gridContainer-details-tab1Template"><%!function(){%><div id="<%=arguments[0]%>"></div><%DevExpress.aspnet.createComponent("dxForm",{"elementAttr":{"class":"form-container"},"formData":tabExtras,"labelLocation":"top","items":[{"itemType":"simple","template":$("#gridContainer-details-tab1-gridTemplate")}]},arguments[0])%><%}("dx-" + new DevExpress.data.Guid())%></script>
+
+<script type="text/html" id="gridContainer-details-tab2Template"><%!function(){%><div id="<%=arguments[0]%>"></div><%DevExpress.aspnet.createComponent("dxForm",{"elementAttr":{"class":"form-container"},"formData":tabExtras,"labelLocation":"top","items":[{"itemType":"simple","template":$("#gridContainer-details-tab2-gridTemplate")}]},arguments[0])%><%}("dx-" + new DevExpress.data.Guid())%></script>
+<script type="text/html" id="gridContainer-details-tab3Template"><%!function(){%><div id="<%=arguments[0]%>"></div><%DevExpress.aspnet.createComponent("dxForm",{"elementAttr":{"class":"form-container"},"formData":tabExtras,"labelLocation":"top","items":[{"itemType":"simple","template":$("#gridContainer-details-tab3-gridTemplate")}]},arguments[0])%><%}("dx-" + new DevExpress.data.Guid())%></script>
+<script type="text/html" id="gridContainer-details-tab1-gridTemplate"><%!function(){%><div id="<%=arguments[0]%>"></div><%DevExpress.aspnet.createComponent("dxDataGrid",{"onRowInserting":function(e) {e.data.IdProyecto = getIdProyectoURL() },"dataSource":{"store":DevExpress.data.AspNet.createStore({"key":"IdFicha","loadParams":{"IdProyecto":getIdProyectoURL},"loadUrl":"/Ficha11OEAction/Get","insertUrl":"/Ficha11OEAction/Post","updateUrl":"/Ficha11OEAction/Put","deleteUrl":"/Ficha11OEAction/Delete"})},"columns":[{"type":"buttons","width":60.0,"buttons":[{"name":"delete","text":"Eliminar","visible":isEditableInforme}]},{"dataField":"IdBeneficiario","caption":"Beneficiário","dataType":"number","lookup":{"dataSource":{"store":DevExpress.data.AspNet.createStore({"key":"IdBeneficiario","loadUrl":"/BeneficiarioAction/Get"})},"valueExpr":"IdBeneficiario","displayExpr":"Nombre"},"allowEditing":false},{"dataField":"IdEstatus","caption":"Status","dataType":"number","lookup":{"dataSource":{"store":DevExpress.data.AspNet.createStore({"key":"IdEstatus","loadUrl":"/EstatusAction/GetByFicha"})},"valueExpr":"IdEstatus","displayExpr":"Nombre"}},{"dataField":"FechaEnvioRevision","caption":"Revisão da data de envio","dataType":"date"},{"dataField":"Descripcion","dataType":"string","visible":false,"allowEditing":true},{"dataField":"Porcentaje1","caption":"Economizar dinheiro - recurso monetário","dataType":"number","visible":false,"allowEditing":true},{"dataField":"Porcentaje2","caption":"Redução do uso de água (potável ou irrigação)","dataType":"number","visible":false,"allowEditing":true},{"dataField":"Porcentaje3","caption":"Redução do uso de eletricidade","dataType":"number","visible":false,"allowEditing":true},{"dataField":"Porcentaje4","caption":"Redução do uso de matéria-prima","dataType":"number","visible":false,"allowEditing":true},{"dataField":"Porcentaje5","caption":"Redução no uso de materiais - insumos","dataType":"number","visible":false,"allowEditing":true},{"dataField":"Porcentaje6","caption":"Redução na quantidade de descargas poluentes","dataType":"number","visible":false,"allowEditing":true},{"dataField":"Porcentaje7","caption":"Redução da concentração de poluentes","dataType":"number","visible":false,"allowEditing":true},{"dataField":"Porcentaje8","caption":"Reutilização de materiais","dataType":"number","visible":false,"allowEditing":true},{"dataField":"Porcentaje9","caption":"Reutilização de resíduos - resíduos ou outros","dataType":"number","visible":false,"allowEditing":true},{"dataField":"Porcentaje10","caption":"Reciclagem de resíduos de matéria-prima, em processo ou produtos acabados","dataType":"number","visible":false,"allowEditing":true},{"dataField":"Porcentaje11","caption":"Reciclagem de materiais residuais da fabricação, embalagem, acondicionamento, embalagem ou outros materiais","dataType":"number","visible":false,"allowEditing":true},{"dataField":"Porcentaje12","caption":"Melhoria dos processos comerciais: produção, vendas, finanças, logística, ou outros.","dataType":"number","visible":false,"allowEditing":true},{"dataField":"Actividad1","caption":"Redesenho de produtos e serviços inovadores para melhorar os existentes.","dataType":"boolean","visible":false,"allowEditing":true},{"dataField":"Actividad2","caption":"Redesenho de etiquetas, embalagens e/ou recipientes com componentes ecologicamente corretos, recicláveis e renováveis.","dataType":"boolean","visible":false,"allowEditing":true},{"dataField":"Actividad3","caption":"O investimento foi feito em maquinário mais eficiente - verde","dataType":"boolean","visible":false,"allowEditing":true},{"dataField":"Actividad4","caption":"Investir em fontes de energia mais eficientes - verdes","dataType":"boolean","visible":false,"allowEditing":true},{"dataField":"Actividad5","caption":"Investindo em uma infra-estrutura mais eficiente - ecologização","dataType":"boolean","visible":false,"allowEditing":true},{"dataField":"Actividad6","caption":"Foram feitos investimentos em treinamento - capacitação em Produção Sustentável.","dataType":"boolean","visible":false,"allowEditing":true},{"dataField":"Actividad7","caption":"A comunicação com os clientes foi melhorada para incentivar a reutilização, a reciclagem e a reciclagem.","dataType":"boolean","visible":false,"allowEditing":true},{"dataField":"Actividad8","caption":"Cumprimento de normas ecológicas nacionais ou internacionais, sustentáveis","dataType":"boolean","visible":false,"allowEditing":true},{"dataField":"Actividad9","caption":"Outro","dataType":"boolean","visible":false,"allowEditing":true},{"dataField":"Actividad9detalle","caption":"Detalhe da atividade","dataType":"string","visible":false,"allowEditing":true},{"dataField":"Area1","caption":"Produção","dataType":"boolean","visible":false,"allowEditing":true},{"dataField":"Area2","caption":"Logística","dataType":"boolean","visible":false,"allowEditing":true},{"dataField":"Area3","caption":"Vendas - marketing","dataType":"boolean","visible":false,"allowEditing":true},{"dataField":"Area4","caption":"Compras - abastecimiento","dataType":"boolean","visible":false,"allowEditing":true},{"dataField":"Area5","caption":"Finanças - contabilidade","dataType":"boolean","visible":false,"allowEditing":true},{"dataField":"Area6","caption":"Distribuição","dataType":"boolean","visible":false,"allowEditing":true},{"dataField":"Area7","caption":"Talento humano","dataType":"boolean","visible":false,"allowEditing":true},{"dataField":"Area8","caption":"Outro","dataType":"boolean","visible":false,"allowEditing":true},{"dataField":"Area8detalle","caption":"Outro detalhe","dataType":"string","visible":false,"allowEditing":true},{"dataField":"ActividadFecha","caption":"Data de adoção da Melhor Prática","dataType":"date","visible":false,"allowEditing":true},{"dataField":"FirmaNombre","caption":"Nome do responsável","dataType":"string","visible":false,"allowEditing":true},{"dataField":"FirmaCargo","caption":"Cargo","dataType":"string","visible":false,"allowEditing":true},{"dataField":"FirmaFecha","caption":"Data de assinatura","dataType":"date","visible":false,"allowEditing":true},{"dataField":"ReferenciaEudr","dataType":"number","visible":false,"allowEditing":false},{"type":"buttons","width":250.0,"name":"BtPID","buttons":[{"hint":"Beneficiário","icon":"group","onClick":onBeneficiarioIconClick,"visible":isEditableInforme},{"name":"edit","text":"Editar","visible":isEditableInforme},{"hint":"Impresión","icon":"pdffile","onClick":onFichaIconClick},{"hint":"Solicitar revisão","icon":"arrowright","onClick":onCerrarIconClick,"visible":isEditableCerrarInforme},{"hint":"Aprovar self-declaration","icon":"check","onClick":onAprobarIconClick,"visible":isCerradoInforme},{"hint":"Modificar autodeclaração","icon":"arrowleft","onClick":onModificarIconClick,"visible":isCerradoInforme},{"hint":"Arquivo","icon":"doc","onClick":onArchivoIconClick},{"hint":"Declaração de reabertura","icon":"return","onClick":onReAbrirIconClick,"visible":false}]}],"editing":{"mode":"popup","allowUpdating":true,"allowAdding":true,"allowDeleting":true,"popup":{"showTitle":true,"width":950.0,"height":775.0},"useIcons":true,"form":{"items":[{"itemType":"group","colCount":2,"colSpan":2,"items":[{"itemType":"simple","dataField":"IdBeneficiario","label":{"text":"Beneficiário"}},{"itemType":"simple","template":$("#templateInstrucciones")}]},{"itemType":"group","colCount":2,"colSpan":2,"items":[{"itemType":"simple","template":$("#DGData-editing-form-items1-items0-template"),"colSpan":2}]},{"itemType":"group","colCount":2,"colSpan":2,"items":[{"itemType":"simple","dataField":"Descripcion","label":{"visible":false},"colSpan":2,"editorOptions":{"height":50.0},"editorType":"dxTextArea"}]},{"itemType":"group","colCount":2,"colSpan":2,"items":[{"itemType":"simple","template":$("#DGData-editing-form-items3-items0-template"),"colSpan":2}]},{"itemType":"group","colCount":2,"colSpan":2,"items":[{"itemType":"simple","dataField":"Porcentaje1","label":{"text":"Economizar dinheiro - recurso monetário","location":"top"},"editorOptions":{"format":"#0%","width":100.0,"showSpinButtons":true,"step":0.01},"editorType":"dxNumberBox"},{"itemType":"simple","dataField":"Porcentaje2","label":{"text":"Redução do uso de água (potável ou irrigação)","location":"top"},"editorOptions":{"format":"#0%","width":100.0,"showSpinButtons":true,"step":0.01},"editorType":"dxNumberBox"},{"itemType":"simple","dataField":"Porcentaje3","label":{"text":"Redução do uso de eletricidade","location":"top"},"editorOptions":{"format":"#0%","width":100.0,"showSpinButtons":true,"step":0.01},"editorType":"dxNumberBox"},{"itemType":"simple","dataField":"Porcentaje4","label":{"text":"Redução do uso de matéria-prima","location":"top"},"editorOptions":{"format":"#0%","width":100.0,"showSpinButtons":true,"step":0.01},"editorType":"dxNumberBox"},{"itemType":"simple","dataField":"Porcentaje5","label":{"text":"Redução no uso de materiais - insumos","location":"top"},"editorOptions":{"format":"#0%","width":100.0,"showSpinButtons":true,"step":0.01},"editorType":"dxNumberBox"},{"itemType":"simple","dataField":"Porcentaje6","label":{"text":"Redução na quantidade de descargas poluentes","location":"top"},"editorOptions":{"format":"#0%","width":100.0,"showSpinButtons":true,"step":0.01},"editorType":"dxNumberBox"},{"itemType":"simple","dataField":"Porcentaje7","label":{"text":"Redução da concentração de poluentes","location":"top"},"editorOptions":{"format":"#0%","width":100.0,"showSpinButtons":true,"step":0.01},"editorType":"dxNumberBox"},{"itemType":"simple","dataField":"Porcentaje8","label":{"text":"Reutilização de materiais","location":"top"},"editorOptions":{"format":"#0%","width":100.0,"showSpinButtons":true,"step":0.01},"editorType":"dxNumberBox"},{"itemType":"simple","dataField":"Porcentaje9","label":{"text":"Reutilização de resíduos - resíduos ou outros","location":"top"},"editorOptions":{"format":"#0%","width":100.0,"showSpinButtons":true,"step":0.01},"editorType":"dxNumberBox"},{"itemType":"simple","dataField":"Porcentaje10","label":{"text":"Reciclagem de resíduos de matéria-prima, em processo ou produtos acabados","location":"top"},"editorOptions":{"format":"#0%","width":100.0,"showSpinButtons":true,"step":0.01},"editorType":"dxNumberBox"},{"itemType":"simple","dataField":"Porcentaje11","label":{"text":"Reciclagem de materiais residuais da fabricação, embalagem, acondicionamento, embalagem ou outros materiais","location":"top"},"editorOptions":{"format":"#0%","width":100.0,"showSpinButtons":true,"step":0.01},"editorType":"dxNumberBox"},{"itemType":"simple","dataField":"Porcentaje12","label":{"text":"Melhoria dos processos comerciais: produção, vendas, finanças, logística, ou outros.","location":"top"},"editorOptions":{"format":"#0%","width":100.0,"showSpinButtons":true,"step":0.01},"editorType":"dxNumberBox"}]},{"itemType":"group","colCount":2,"colSpan":2,"items":[{"itemType":"simple","template":$("#DGData-editing-form-items5-items0-template"),"colSpan":2}]},{"itemType":"group","colCount":2,"colSpan":2,"items":[{"itemType":"simple","dataField":"Actividad1","label":{"text":"Redesenho de produtos e serviços inovadores para melhorar os existentes.","location":"top"}},{"itemType":"simple","dataField":"Actividad2","label":{"text":"Redesenho de etiquetas, embalagens e/ou recipientes com componentes ecologicamente corretos, recicláveis e renováveis.","location":"top"}},{"itemType":"simple","dataField":"Actividad3","label":{"text":"O investimento foi feito em maquinário mais eficiente - verde","location":"top"}},{"itemType":"simple","dataField":"Actividad4","label":{"text":"Investir em fontes de energia mais eficientes - verdes","location":"top"}},{"itemType":"simple","dataField":"Actividad5","label":{"text":"Investindo em uma infra-estrutura mais eficiente - ecologização","location":"top"}},{"itemType":"simple","dataField":"Actividad6","label":{"text":"Foram feitos investimentos em treinamento - capacitação em Produção Sustentável.","location":"top"}},{"itemType":"simple","dataField":"Actividad7","label":{"text":"A comunicação com os clientes foi melhorada para incentivar a reutilização, a reciclagem e a reciclagem.","location":"top"}},{"itemType":"simple","dataField":"Actividad8","label":{"text":"Cumprimento de normas ecológicas nacionais ou internacionais, sustentáveis","location":"top"}},{"itemType":"simple","dataField":"Actividad9","label":{"text":"Outro","location":"top"}},{"itemType":"simple","dataField":"Actividad9detalle","label":{"text":"Detalhe da atividade","location":"top"}}]},{"itemType":"group","colCount":2,"colSpan":2,"items":[{"itemType":"simple","template":$("#DGData-editing-form-items7-items0-template"),"colSpan":2}]},{"itemType":"group","colCount":2,"colSpan":2,"items":[{"itemType":"simple","dataField":"Area1","label":{"text":"Produção"}},{"itemType":"simple","dataField":"Area2","label":{"text":"Logística"}},{"itemType":"simple","dataField":"Area3","label":{"text":"Vendas - marketing"}},{"itemType":"simple","dataField":"Area4","label":{"text":"Compras - abastecimiento"}},{"itemType":"simple","dataField":"Area5","label":{"text":"Finanças - contabilidade"}},{"itemType":"simple","dataField":"Area6","label":{"text":"Distribuição"}},{"itemType":"simple","dataField":"Area7","label":{"text":"Talento humano"}},{"itemType":"simple","dataField":"Area8","label":{"text":"Outro"}},{"itemType":"simple","dataField":"Area8detalle","label":{"text":"Outro detalhe"}}]},{"itemType":"group","colCount":2,"colSpan":2,"items":[{"itemType":"simple","dataField":"ActividadFecha","label":{"text":"Data de adoção da Melhor Prática"},"isRequired":true}]},{"itemType":"group","colCount":2,"colSpan":2,"items":[{"itemType":"simple","template":$("#DGData-editing-form-items10-items0-template"),"colSpan":2}]},{"itemType":"group","colCount":2,"colSpan":2,"items":[{"itemType":"simple","dataField":"FirmaNombre","label":{"text":"Nome do responsável"}},{"itemType":"simple","dataField":"FirmaCargo","label":{"text":"Cargo"}},{"itemType":"simple","dataField":"FirmaFecha","label":{"text":"Data de assinatura"},"isRequired":true}]},{"itemType":"group","colCount":2,"colSpan":2,"items":[{"itemType":"simple","dataField":"IdEstatus","label":{"text":"Status"},"visible":false}]}]}},"headerFilter":{"visible":true},"filterRow":{"visible":true,"applyFilter":"auto"},"export":{"enabled":true},"onExporting":exportingDG,"paging":{"pageSize":15},"selection":{"mode":"single"},"onSelectionChanged":selectionChanged,"showBorders":true,"toolbar":{"items":[{"location":"after","options":{"icon":"check","hint":"Valide as autodeclarações nesta página.","onClick":function(e) {
+    var result = DevExpress.ui.dialog.confirm(
+    "¿Está seguro de procesar-cerrar todos los registros de la página actual?",
+    "Confirmar Proceso"
+    );
+
+    result.done(function(dialogResult) {
+    if (dialogResult) {
+    procesarTodosLosRegistros();
+    }
+    });
+    }},"widget":"dxButton","visible":false},{"location":"after","name":"exportButton","visible":true},{"location":"after","options":{"icon":"add","onClick":function(e) {
+
+                            $.ajax({
+                            type: 'GET',
+                            url: 'BeneficiarioFicha',
+                            dataType: 'html',
+                            data: { Tipo: 'F11OE', Id: -1, IdProyectoIndicador: getIdProyectoURL() },
+                            success: function (result) {
+
+                            var popup = $("#file-popup").dxPopup('instance');
+                            popup.option("contentTemplate", function (content) {
+                            content.append(result);
+                            });
+                            $('#file-popup').dxPopup("show");
+                            }
+                            })
+                            
+                            }},"widget":"dxButton","visible":true}]}},arguments[0])%><%}("DGData")%></script><script type="text/html" id="DGData-editing-form-items1-items0-template"><div class='dx-field-item-label-text'>Explique sobre as Boas Práticas que foram aplicadas</div></script><script type="text/html" id="DGData-editing-form-items3-items0-template"><div class='dx-field-item-label-text'><b>Informe o percentual correspondente caso a aplicação da Boa Prática tenha gerado:</b></div></script><script type="text/html" id="DGData-editing-form-items5-items0-template"><div class='dx-field-item-label-text'><b>Selecione na caixa correspondente se a aplicação da Boa Prática gerou:</b></div></script><script type="text/html" id="DGData-editing-form-items7-items0-template"><div class='dx-field-item-label-text'><b>Área(s) da PME em que a prática económica sustentável foi aplicada.</b></div></script><script type="text/html" id="DGData-editing-form-items10-items0-template"><div class='dx-field-item-label-text'> <hr> </ div > </script>
+
+<script type="text/html" id="gridContainer-details-tab2-gridTemplate">    <div class="row" id="ArchivoCargaFP">
+        <div class="col">
+            <%!function(){%><div id="<%=arguments[0]%>"></div><%DevExpress.aspnet.createComponent("dxFileUploader",{"name":"xlsFile","accept":"*","multiple":true,"allowedFileExtensions":[".xls",".xlsx"],"uploadMode":"instantly","labelText":"","onFilesUploaded":fileUploader_finished,"onProgress":fileUploader_progress,"onUploadError":fileUploader_error,"selectButtonText":"Seleccione archivo a cargar","uploadUrl":"/CargaListado/UploadFileFicha?sFicha=F11OE\u0026IdProyectoIndicador=291","visible":true,"inputAttr":{"id":"xlsFile"}},arguments[0])%><%}("dx-" + new DevExpress.data.Guid())%>
+
+        </div>
+
+        <div class="col">
+            <div id="results"></div>
+        </div>
+
+        <div class="col">
+
+            <%!function(){%><div id="<%=arguments[0]%>"></div><%DevExpress.aspnet.createComponent("dxLoadIndicator",{"height":40.0,"width":40.0,"visible":false},arguments[0])%><%}("medium-indicator")%>
+        </div>
+
+    </div>
+<%!function(){%><div id="<%=arguments[0]%>"></div><%DevExpress.aspnet.createComponent("dxDataGrid",{"dataSource":{"store":DevExpress.data.AspNet.createStore({"key":"IdArchivoCarga","loadParams":{"IdProyectoEvento":32,"sTipo":"F11OE","sIndicador":getIdProyectoURL},"loadUrl":"/VW_ArchivoCargaResumenApi/GetByIdProyectoEventoIndicador"})},"columns":[{"dataField":"Fecha","caption":"Data","dataType":"date","validationRules":[{"type":"required","message":"The Data field is required."}],"width":"140px"},{"dataField":"PathArchivo","caption":"Nome do arquivo","dataType":"string","validationRules":[{"type":"required","message":"The Nome do arquivo field is required."}]},{"dataField":"Nombre","caption":"Carga de resultado","dataType":"string","validationRules":[{"type":"required","message":"The Carga de resultado field is required."}]},{"caption":"Número de registros","alignment":"center","columns":[{"dataField":"CantidadRegistros","caption":"Totais","dataType":"number","validationRules":[{"type":"required","message":"The Totais field is required."}],"width":"110px"},{"dataField":"CantidadRegistrosCargaFinalOk","caption":"Sucesso","dataType":"number","validationRules":[{"type":"required","message":"The Sucesso field is required."}],"width":"110px"},{"dataField":"CantidadRegistrosCargaFinalError","caption":"Com erro","dataType":"number","validationRules":[{"type":"required","message":"The Com erro field is required."}],"width":"110px"}]}],"headerFilter":{"visible":true},"paging":{"pageSize":15},"selection":{"mode":"single"},"showBorders":true,"masterDetail":{"enabled":true,"template":$("#gridContainer-detailsCarga")}},arguments[0])%><%}("dataContainerResumen")%></script>
+
+<script type="text/html" id="gridContainer-details-tab3-gridTemplate">    <div class="container" style="margin-top: 20px;">
+        <div class="row">
+            <!-- Columna izquierda: FileUploader y LoadIndicator abajo -->
+            <div class="col-auto d-flex flex-column align-items-start">
+                <div>
+                    <%!function(){%><div id="<%=arguments[0]%>"></div><%DevExpress.aspnet.createComponent("dxFileUploader",{"name":"pdfFiles","accept":"*","multiple":true,"allowedFileExtensions":[".pdf"],"uploadMode":"instantly","showFileList":false,"labelText":"","onUploaded":fileUploader_finished2,"onProgress":fileUploader_progress2,"onUploadError":fileUploader_error2,"selectButtonText":"Seleccione archivo a cargar","uploadUrl":"/CargaListado/UploadFileFichaPDF?sFicha=F11OE\u0026IdProyectoIndicador=291","inputAttr":{"id":"pdfFiles"}},arguments[0])%><%}("dx-" + new DevExpress.data.Guid())%>
+                </div>
+                <div class="mt-2">
+                    <%!function(){%><div id="<%=arguments[0]%>"></div><%DevExpress.aspnet.createComponent("dxLoadIndicator",{"height":40.0,"width":40.0,"visible":false},arguments[0])%><%}("medium-indicatorfp")%>
+                </div>
+            </div>
+
+            <!-- Columna derecha: Resultados -->
+            <div class="col">                
+                <div id="resultscargafp" style="padding:10px; border:1px solid #ccc; border-radius:6px; background:#f9f9f9; min-height:100px;"></div>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/html" id="gridContainer-detailsCarga"><%!function(){%><div id="<%=arguments[0]%>"></div><%DevExpress.aspnet.createComponent("dxTabPanel",{"items":[{"title":"CARREGAR DETALHE [ERROS]","template":$("#gridContainer-detailsCarga-tab1Template"),"tabExtras":{"ArchivoCargaID":data.IdArchivoCarga}}]},arguments[0])%><%}("dx-" + new DevExpress.data.Guid())%></script>
+
+
+
+<script type="text/html" id="gridContainer-detailsCarga-tab1Template"><%!function(){%><div id="<%=arguments[0]%>"></div><%DevExpress.aspnet.createComponent("dxForm",{"elementAttr":{"class":"form-container"},"formData":tabExtras,"labelLocation":"top","items":[{"itemType":"simple","template":$("#gridContainer-detailsCarga-tab1-gridTemplate")}]},arguments[0])%><%}("dx-" + new DevExpress.data.Guid())%></script>
+
+
+<script type="text/html" id="gridContainer-detailsCarga-tab1-gridTemplate">    <br />
+    <center>
+        <%!function(){%><div id="<%=arguments[0]%>"></div><%DevExpress.aspnet.createComponent("dxDataGrid",{"showBorders":true,"export":{"enabled":true},"onExporting":exportingDG3,"dataSource":{"store":DevExpress.data.AspNet.createStore({"key":"IdArchivoCargaDetalle","loadParams":{"IdArchivoCarga":function() { return component.option('formData').ArchivoCargaID }},"loadUrl":"/VW_ArchivoCargaDetalleResumenApi/GetByIdArchivoCarga"})},"paging":{"pageSize":5},"columns":[{"dataField":"Columna1","caption":"País","dataType":"string","validationRules":[{"type":"required","message":"The País field is required."}],"width":"200px","visible":false},{"dataField":"Columna2","caption":"Identificação fiscal","dataType":"string","validationRules":[{"type":"required","message":"The Identificação fiscal field is required."}],"width":"200px","visible":false},{"dataField":"Columna3","caption":"Nome da empresa","dataType":"string","validationRules":[{"type":"required","message":"The Nome da empresa field is required."}],"width":"200px","visible":false},{"dataField":"Columna4","caption":"Nome do Participante","dataType":"string","validationRules":[{"type":"required","message":"The Nome do Participante field is required."}],"width":"200px","visible":false},{"dataField":"Columna5","caption":"Sexo","dataType":"string","validationRules":[{"type":"required","message":"The Sexo field is required."}],"width":"200px","visible":false},{"dataField":"Columna6","caption":"Idade","dataType":"string","validationRules":[{"type":"required","message":"The Idade field is required."}],"width":"200px","visible":false},{"dataField":"Columna7","caption":"Endereço de e-mail","dataType":"string","validationRules":[{"type":"required","message":"The Endereço de e-mail field is required."}],"width":"200px","visible":false},{"dataField":"Columna8","caption":"Setor","dataType":"string","validationRules":[{"type":"required","message":"The Setor field is required."}],"width":"200px","visible":false},{"dataField":"Columna9","caption":"Página Web","dataType":"string","validationRules":[{"type":"required","message":"The Página Web field is required."}],"width":"200px","visible":false},{"dataField":"Columna10","caption":"Facebook","dataType":"string","validationRules":[{"type":"required","message":"The Facebook field is required."}],"width":"200px","visible":false},{"dataField":"Columna11","caption":"LinkedIn","dataType":"string","validationRules":[{"type":"required","message":"The LinkedIn field is required."}],"width":"200px","visible":false},{"dataField":"Columna12","caption":"Tamanho da empresa","dataType":"string","validationRules":[{"type":"required","message":"The Tamanho da empresa field is required."}],"width":"200px","visible":false},{"dataField":"NumeroFila","caption":"# Fila","dataType":"number","validationRules":[{"type":"required","message":"The # Fila field is required."}],"width":"60px"},{"dataField":"Estatus","caption":"Status Carga da linha","dataType":"string","validationRules":[{"type":"required","message":"The Status Carga da linha field is required."}],"width":"175px"},{"dataField":"Observaciones","caption":"Observações","dataType":"string","validationRules":[{"type":"required","message":"The Observações field is required."}]}]},arguments[0])%><%}('gridContainer-pobjetivo-' + component.option('formData').ArchivoCargaID)%>
+    </center>
+</script>
+
+
+
+
+
+<script>
+    var dataGrid;
+
+
+    var selectedRowIndex = -1;
+
+
+    var selectionChanged = function (e) {
+    }
+
+    var getGridInstance = function() {
+        return $("#dataContainer").dxDataGrid("instance");
+    }
+
+
+
+
+      function exportingDG(e) {
+        var workbook = new ExcelJS.Workbook();
+        var worksheet = workbook.addWorksheet('Data');
+
+        DevExpress.excelExporter.exportDataGrid({
+            component: e.component,
+            worksheet: worksheet,
+            autoFilterEnabled: true
+        }).then(function () {
+            workbook.xlsx.writeBuffer().then(function (buffer) {
+                saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'Data.xlsx');
+            });
+        });
+        e.cancel = true;
+    }
+
+            </script>
+
+ 
+<div id="file-popup" class="dx-overlay dx-popup dx-widget dx-state-invisible dx-visibility-change-handler"><div class="dx-overlay-content dx-popup-normal" aria-hidden="true" tabindex="0" style="width: 925px; height: 750px;"><div class="dx-popup-content"></div></div></div><script>DevExpress.utils.readyCallbacks.add((function($){$("#file-popup").dxPopup({"width":925.0,"height":750.0,"showTitle":true,"title":"Beneficiário","dragEnabled":false,"showCloseButton":true});}).bind(this, jQuery));</script>
+
+
+
+<div id="filemanager-popup" class="dx-overlay dx-popup dx-widget dx-state-invisible dx-visibility-change-handler"><div class="dx-overlay-content dx-popup-fullscreen" aria-hidden="true" tabindex="0" style="width: 100%; height: 100%;"><div class="dx-popup-content"></div></div></div><script>DevExpress.utils.readyCallbacks.add((function($){$("#filemanager-popup").dxPopup({"width":980.0,"height":690.0,"showTitle":true,"title":"Fazendo upload e visualizando arquivos","dragEnabled":false,"showCloseButton":true,"fullScreen":true});}).bind(this, jQuery));</script>
+
+
+<div id="documento-popup" class="dx-overlay dx-popup dx-widget dx-state-invisible dx-visibility-change-handler"><div class="dx-overlay-content dx-popup-normal" aria-hidden="true" tabindex="0" style="width: 925px; height: 750px;"><div class="dx-popup-content"></div></div></div><script>DevExpress.utils.readyCallbacks.add((function($){$("#documento-popup").dxPopup({"width":925.0,"height":750.0,"showTitle":true,"title":"Impressão de documentos","dragEnabled":false,"showCloseButton":true,"onHiding":PopuOnHiding});}).bind(this, jQuery));</script>
+
+<div id="product-list">
+
+    <div id="toast2" class="dx-overlay dx-widget dx-state-invisible dx-visibility-change-handler dx-toast"><div class="dx-overlay-content dx-toast-info dx-toast-content" aria-hidden="true" style="width: 80vw; height: auto;"></div></div><script>DevExpress.utils.readyCallbacks.add((function($){$("#toast2").dxToast({"displayTime":400000.0,"closeOnClick":true});}).bind(this, jQuery));</script>
+</div>
+
+<script>
+
+    var dataGrid;
+
+    $(function () {
+        dataGrid = $("#DGData").dxDataGrid("instance");
+    });
+
+    function refreshButtonClicked() {
+        dataGrid.refresh();
+    }
+
+    function PopuOnHiding()
+    {
+        location.reload();
+    }
+
+    function getIdProyectoURL() {
+
+        var QS = window.location.search;
+        var urlParams = new URLSearchParams(QS);
+        return urlParams.get('IdProyectoIndicadorML');
+
+    }
+
+    function onFichaIconClick(e) {
+        
+        if (e.row.data.ReferenciaEudr == 0)
+            window.open("/rFicha11OE?IdFicha=" + e.row.key, "_blank");
+        else
+            window.open("/rFicha12EUDR?IdFicha=" + e.row.data.ReferenciaEudr, "_blank");
+
+    }
+
+    function isEditableInforme(e) {
+
+        var vPermisoRe = 'False';
+
+        if (vPermisoRe == 'True')
+            return true;
+        else {
+            if (e.row.data.IdEstatus == 12)
+                return true;
+            else
+                return false;
+        }
+    }
+
+
+    function isEditableCerrarInforme(e) {
+
+        var vPermisoRe = 'False';
+        if (vPermisoRe == 'True')
+            return false;
+        else {
+            if (e.row.data.IdEstatus == 12)
+                return true;
+            else
+                return false;
+        }
+    }
+
+
+
+    function isCerradoInforme(e) {
+
+        var vPermisoRe = 'False';
+
+        if (vPermisoRe == 'False')
+            return false;
+        else {
+            if (e.row.data.IdEstatus == 26)
+                return true;
+            else
+                return false;
+        }
+    }
+
+    function isReAperturaInforme(e) {
+
+        var vPermisoRe = 'False';
+
+        if (vPermisoRe == 'False')
+            return false;
+        else {
+            if (e.row.data.IdEstatus == 13)
+                return true;
+            else
+                return false;
+        }
+    }
+
+
+    function onCerrarIconClick(e) {
+        var data = { IdFicha : e.row.key };
+
+        var urlP = '/Ficha11OEAction/PostFormCierre';
+        // Ajax call to fetch your content
+        $.ajax({
+            method: "POST",
+            url: urlP,
+            data: { idPIT: e.row.key },
+            success: function (result) {
+                var dataGridArchivo = $("#DGData").dxDataGrid("instance");
+                dataGridArchivo.refresh();
+            }
+        }).fail(function (err) {
+            // Handle ajax error
+            resultado = false;
+            // Hide the loader
+
+            var message = "";
+            const type = "error";
+
+            message = "Error al procesar ficha. [Revise informe técnico]";
+            $("#toast2").dxToast("instance").option({
+                type,
+                message,
+                visible: true,
+                position: {
+                    my: "bottom center",
+                    at: "bottom center",
+                    of: "#DGData"
+                }
+            });
+
+        });
+    
+    }
+
+    function onAprobarIconClick(e) {
+        var data = { IdParametro: e.row.key };
+
+        var urlP = '/Ficha11OEAction/PostFormAprobado';
+        // Ajax call to fetch your content
+        $.ajax({
+            method: "POST",
+            url: urlP,
+            data: { idPIT: e.row.key },
+            success: function (result) {
+                var dataGridArchivo = $("#DGData").dxDataGrid("instance");
+                dataGridArchivo.refresh();
+            }
+        }).fail(function (err) {
+            // Handle ajax error
+            resultado = false;
+            // Hide the loader
+
+            var message = "";
+            const type = "error";
+
+            message = "Error al procesar ficha. [Revise informe técnico]";
+            $("#toast2").dxToast("instance").option({
+                type,
+                message,
+                visible: true,
+                position: {
+                    my: "bottom center",
+                    at: "bottom center",
+                    of: "#DGData"
+                }
+            });
+
+        });
+
+    }
+
+
+    function onModificarIconClick(e) {
+        var data = { IdParametro: e.row.key };
+
+        var urlP = '/Ficha11OEAction/PostFormModifica';
+        // Ajax call to fetch your content
+        $.ajax({
+            method: "POST",
+            url: urlP,
+            data: { idPIT: e.row.key },
+            success: function (result) {
+                var dataGridArchivo = $("#DGData").dxDataGrid("instance");
+                dataGridArchivo.refresh();
+            }
+        }).fail(function (err) {
+            // Handle ajax error
+            resultado = false;
+            // Hide the loader
+
+            var message = "";
+            const type = "error";
+
+            message = "Error al procesar ficha. [Revise informe técnico]";
+            $("#toast2").dxToast("instance").option({
+                type,
+                message,
+                visible: true,
+                position: {
+                    my: "bottom center",
+                    at: "bottom center",
+                    of: "#DGData"
+                }
+            });
+
+        });
+
+    }
+
+    function onReAbrirIconClick(e) {
+        var data = { IdParametro: e.row.key };
+
+        var urlP = '/Ficha11OEAction/PostFormReApertura';
+        // Ajax call to fetch your content
+        $.ajax({
+            method: "POST",
+            url: urlP,
+            data: { idPIT: e.row.key },
+            success: function (result) {
+                var dataGridArchivo = $("#DGData").dxDataGrid("instance");
+                dataGridArchivo.refresh();
+            }
+        }).fail(function (err) {
+            // Handle ajax error
+            resultado = false;
+            // Hide the loader
+
+            var message = "";
+            const type = "error";
+
+            message = "Error al procesar ficha. [Revise informe técnico]";
+            $("#toast2").dxToast("instance").option({
+                type,
+                message,
+                visible: true,
+                position: {
+                    my: "bottom center",
+                    at: "bottom center",
+                    of: "#DGData"
+                }
+            });
+
+        });
+
+    }
+
+
+
+    function click_valueChanged() {
+        
+        var IdTributario = $("#IdTributaria").dxTextBox('instance').option('value');
+        var IdPais = $("#LPais").dxSelectBox("instance").option("value");
+        var dataSend = { IdPais: IdPais, IdentificacionTributaria: IdTributario };
+
+        $("#lMensajeNuevo").html("");
+
+        fetch('api/Beneficiario', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataSend)
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.IdBeneficiario != null) {
+                    $("#IdBeneficiario").val(data.IdBeneficiario);
+                    $("#tbNombre").dxTextBox('instance').option('value', data.Nombre);
+                    $("#tbSectorDetalle").dxTextBox('instance').option('value', data.EmpresaSectorDetalle);
+                    $("#tbCorreo").dxTextBox('instance').option('value', data.CorreoElectronico);
+                    $("#tbTelefono").dxTextBox('instance').option('value', data.TelefonoEmpresa);
+                    $("#tbDepartamento").dxTextBox('instance').option('value', data.Departamento);
+                    $("#tbCiudad").dxTextBox('instance').option('value', data.Ciudad);
+                    $("#tbNombreRepresentante").dxTextBox('instance').option('value', data.NombreRepresentante);
+                    $("#tbApellidoRepresentante").dxTextBox('instance').option('value', data.ApellidoRepresentante);
+
+                    $("#LTamanio").dxSelectBox('instance').option('value', data.EmpresaTamanio);
+                    $("#LSector").dxSelectBox('instance').option('value', data.EmpresaSector);
+                    $("#LSexo").dxSelectBox('instance').option('value', data.Sexo);
+                    $("#LEdad").dxSelectBox('instance').option('value', data.LimiteEdad);
+
+                    
+                    $("#lMensajeNuevo").html('Benefici&#xE1;rio encontrado');
+                } else {
+
+                    $("#IdBeneficiario").val("0");
+                    $("#tbNombre").dxTextBox('instance').option('value', '');
+                    $("#tbSectorDetalle").dxTextBox('instance').option('value', '');
+                    $("#tbCorreo").dxTextBox('instance').option('value', '');
+                    $("#tbTelefono").dxTextBox('instance').option('value', '');
+                    $("#tbDepartamento").dxTextBox('instance').option('value', '');
+                    $("#tbCiudad").dxTextBox('instance').option('value', '');
+                    $("#tbNombreRepresentante").dxTextBox('instance').option('value', '');
+                    $("#tbApellidoRepresentante").dxTextBox('instance').option('value', '');
+                    
+                    $("#lMensajeNuevo").html('Benefici&#xE1;rio n&#xE3;o encontrado');
+                    
+                }
+
+            })
+            .catch((error) => {
+
+                $("#IdBeneficiario").val("0");
+                $("#tbNombre").dxTextBox('instance').option('value', '');
+                $("#tbSectorDetalle").dxTextBox('instance').option('value', '');
+                $("#tbCorreo").dxTextBox('instance').option('value', '');
+                $("#tbTelefono").dxTextBox('instance').option('value', '');
+                $("#tbDepartamento").dxTextBox('instance').option('value', '');
+                $("#tbCiudad").dxTextBox('instance').option('value', '');
+                $("#tbNombreRepresentante").dxTextBox('instance').option('value', '');
+                $("#tbApellidoRepresentante").dxTextBox('instance').option('value', '');
+                $("#lMensajeNuevo").html('Benefici&#xE1;rio n&#xE3;o encontrado');
+                
+            }
+            );
+
+        
+
+        
+
+    }
+    
+      
+
+    function onArchivoIconClick(e) {
+         
+        
+            $.ajax({
+                type: 'GET',
+                url: 'FileManager',
+                dataType: 'html',
+            data: { Tipo: 'F11OE', Id: e.row.key, Estatus : e.row.data.IdEstatus },
+                success: function (result) {
+                    var popup = $("#filemanager-popup").dxPopup('instance');
+                    popup.option("contentTemplate", function (content) {
+                        content.append(result);
+                    });
+                    $('#filemanager-popup').dxPopup("show");
+                }
+            })
+    }
+
+    function onBeneficiarioIconClick(e) {
+        $.ajax({
+            type: 'GET',
+            url: 'BeneficiarioFicha',
+            dataType: 'html',
+            data: { Tipo: 'F11OE', Id: e.row.key },
+            success: function (result) {
+                var popup = $("#file-popup").dxPopup('instance');
+                popup.option("contentTemplate", function (content) {
+                    content.append(result);
+                });
+                $('#file-popup').dxPopup("show");
+            }
+        })
+    }
+
+
+    function isIconVisible(e) {
+
+        if (e.row.data.IdEstatus == 13)
+            return false;
+        else {
+            var vBandera = 'True';            
+            if (vBandera == 'True')
+                return true;
+            else
+                return false;
+        }
+    }
+
+
+    function fileUploader_finished(e) {
+
+        $("#medium-indicator").dxLoadIndicator('instance').option('visible', false);
+        var dataGridArchivo = $("#dataContainerResumen").dxDataGrid("instance");
+        dataGridArchivo.refresh();
+
+        var dataGridFicha = $("#DGData").dxDataGrid("instance");
+        dataGridFicha.refresh();
+
+    }
+
+    function fileUploader_progress(e) {
+        $("#results").html('');
+        $("#medium-indicator").dxLoadIndicator('instance').option('visible', true);
+    }
+
+    function fileUploader_error(e) {
+        e.message = "Proceso de carga con error.";
+        $("#results").html('');
+        $("#results").html(e.request.responseText);
+    }
+
+
+
+
+
+
+
+        function fileUploader_finished2(e) {
+        if (!e || !e.request || !e.request.response) return;
+
+        try {
+            const resultados = JSON.parse(e.request.response);
+            const contenedor = document.getElementById("resultscargafp");
+
+            // Verifica si ya existe la tabla; si no, crea estructura
+            if (!contenedor.querySelector("table")) {
+                contenedor.innerHTML = `
+                    <table style="width:100%; border-collapse: collapse; font-size: 0.95rem;">
+                        <thead style="background-color: #f0f0f0;">
+                            <tr>
+                                <th style="border: 1px solid #ccc; padding: 6px;">#</th>
+                                <th style="border: 1px solid #ccc; padding: 6px;">Nombre Archivo</th>
+                                <th style="border: 1px solid #ccc; padding: 6px;">Resultado</th>
+                                <th style="border: 1px solid #ccc; padding: 6px;">Ficha Asociada</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>`;
+            }
+
+            const tbody = contenedor.querySelector("tbody");
+            resultados.forEach((r, i) => {
+                const color = r.Exitoso ? "green" : "red";
+                const icon = r.Exitoso ? "✔️" : "❌";
+
+                const ficha = (r.Mensaje || "").match(/\d{3,}/)?.[0] ?? "-";
+
+                const fila = `
+                    <tr>
+                        <td style="border: 1px solid #ccc; padding: 6px;">${i + 1}</td>
+                        <td style="border: 1px solid #ccc; padding: 6px;">${r.NombreArchivo}</td>
+                        <td style="border: 1px solid #ccc; padding: 6px; color:${color}; font-weight:bold;">${icon} ${r.Mensaje}</td>
+                        <td style="border: 1px solid #ccc; padding: 6px;">${ficha}</td>
+                    </tr>`;
+                tbody.innerHTML += fila;
+            });
+
+            $("#medium-indicatorfp").dxLoadIndicator('instance').option('visible', false);
+        } catch (err) {
+            console.error("Error al procesar la respuesta del servidor:", err);
+            const contenedor = document.getElementById("resultscargafp");
+            contenedor.innerHTML += "<div style='color:red'>Error al procesar un archivo.</div>";
+        }
+    }
+
+
+    function fileUploader_finished2b(e) {
+        if (!e || !e.request || !e.request.response) return;
+
+        try {
+            const resultados = JSON.parse(e.request.response);
+
+            let html = "";
+            resultados.forEach(r => {
+                const color = r.Exitoso ? "green" : "red";
+                const icon = r.Exitoso ? "✔️" : "❌";
+                html += `<li style="color:${color}"><strong>${r.NombreArchivo}</strong>: ${icon} ${r.Mensaje}</li>`;
+            });
+
+            const contenedor = document.getElementById("resultscargafp");
+            if (!contenedor.querySelector("ul")) {
+            contenedor.innerHTML = "<ul style='padding-left: 1.2rem; margin: 0;'></ul>";
+            }
+            contenedor.querySelector("ul").innerHTML += html;
+            $("#medium-indicatorfp").dxLoadIndicator('instance').option('visible', false);
+
+        } catch (err) {
+            console.error("Error al procesar la respuesta del servidor:", err);
+            document.getElementById("resultscargafp").innerHTML += "<li style='color:red'>Error al procesar un archivo.</li>";
+        }
+    }
+
+
+    function fileUploader_progress2(e) {
+        $("#resultscargafp").html('');
+        $("#medium-indicatorfp").dxLoadIndicator('instance').option('visible', true);
+    }
+
+    function fileUploader_error2(e) {
+        e.message = "Proceso de carga con error.";
+        $("#resultscargafp").html('');
+        $("#resultscargafp").html(e.request.responseText);
+    }
+
+    function procesarTodosLosRegistros() {
+          // Obtener instancia del DataGrid
+          var dataGrid = $("#DGData").dxDataGrid("instance");
+
+          // Obtener los datos de la página actual
+          var datosVisibles = dataGrid.getVisibleRows();
+
+          // Filtrar solo los registros con IdEstatus = 26 y extraer los IdFicha
+          var idsFichas = datosVisibles
+              .filter(function(row) {
+                  return row.data.IdEstatus === 26;
+              })
+              .map(function(row) {
+                  return row.data.IdFicha;
+              });
+
+          // Validar que hay registros para procesar
+          if (idsFichas.length === 0) {
+              $("#toast2").dxToast("instance").option({
+                  type: "warning",
+                  message: "No hay registros con estatus en revisión en la página actual para procesar.",
+                  visible: true,
+                  displayTime: 3000,
+                  position: {
+                      my: "top center",
+                      at: "top center",
+                      of: "#DGData"
+                  }
+              });
+              return;
+          }
+
+          // Mostrar indicador de carga
+          var loadPanel = DevExpress.ui.notify("Procesando " + idsFichas.length + " registro(s)...", "info", 2000);
+
+          var urlP = '/Ficha11OEAction/ProcesarRegistros';
+
+          $.ajax({
+              method: "POST",
+              url: urlP,
+              contentType: 'application/json',
+              data: JSON.stringify({
+                  idsFichas: idsFichas,
+                  IdProyectoIndicador: getIdProyectoURL()
+              }),
+              success: function (result) {
+                  // Refrescar el grid
+                  dataGrid.refresh();
+
+                  // Mostrar mensaje de éxito
+                  const message = result.mensaje || "Registros procesados exitosamente";
+                  const type = result.exitoso ? "success" : "error";
+
+                  $("#toast2").dxToast("instance").option({
+                      type: type,
+                      message: message,
+                      visible: true,
+                      displayTime: 4000,
+                      position: {
+                          my: "top center",
+                          at: "top center",
+                          of: "#DGData"
+                      }
+                  });
+              },
+              error: function(xhr, status, error) {
+                  // Mostrar mensaje de error
+                  const message = "Error al procesar los registros. Por favor intente nuevamente.";
+
+                  $("#toast2").dxToast("instance").option({
+                      type: "error",
+                      message: message,
+                      visible: true,
+                      displayTime: 5000,
+                      position: {
+                          my: "top center",
+                          at: "top center",
+                          of: "#DGData"
+                      }
+                  });
+              }
+          });
+      }
+
+</script>
+
+
+
+
+
+<script>
+
+    var List1 = [{
+        "id": 1, "name": "Mujer/Women"
+    }, {
+        "id": 2, "name": "Hombre/Man"
+    }, {
+        "id": 3, "name": "Prefiere no indicar/Prefers not to indicate"
+    }
+    ];
+
+    var LimiteEdad = [{
+        "id": 1, "name": "Desde 17 hasta 29 años, a la fecha/From 17 to 29 years old, to date"
+    }, {
+        "id": 2, "name": "Más de 29 años, a la fecha/More than 29 years, to date"
+    }
+    ];
+
+    var Tamanio = [{
+        "id": 1, "name": "Micro/Mico"
+    }, {
+        "id": 2, "name": "Pequeña/Small"
+    }, {
+        "id": 3, "name": "Mediana/Medium"
+    }, {
+        "id": 4, "name": "Grande/Large"
+    }, {
+        "id": 5, "name": "Otro/Other"
+    }
+    ];
+
+    var Sector = [{
+        "id": 1, "name": "Agrícola, ganadera, pesquera, minera, forestal/Agricultural, livestock, fishing, mining, forestry"
+    }, {
+        "id": 2, "name": "Industrial, agroindustria, manufacturera, procesadora, artesanal, farmacéutica/Industrial, agribusiness, manufacturing, processing, artisanal, pharmaceutical"
+    }, {
+        "id": 3, "name": "Servicios, turismo, software, seguridad, asesoría, transporte, comercio (mayor - menor bienes y/o servicios)/Services, tourism, software, security, consulting, transportation, commerce (major - minor goods and/or services)"
+    }, {
+        "id": 4, "name": "Innovación, digitalización, conocimiento, gestión de la información/Innovation, digitalization, knowledge, information management"
+    },
+    {
+        "id": 5, "name": "Otro ( cuál ?)/Other (which one?)"
+    }
+    ];
+
+
+
+    function exportingDG3(e) {
+
+        e.component.beginUpdate();
+        e.component.columnOption('Columna1', 'visible', true);
+        e.component.columnOption('Columna2', 'visible', true);
+        e.component.columnOption('Columna3', 'visible', true);
+        e.component.columnOption('Columna4', 'visible', true);
+        e.component.columnOption('Columna5', 'visible', true);
+        e.component.columnOption('Columna6', 'visible', true);
+        e.component.columnOption('Columna7', 'visible', true);
+        e.component.columnOption('Columna8', 'visible', true);
+        e.component.columnOption('Columna9', 'visible', true);
+        e.component.columnOption('Columna10', 'visible', true);
+        e.component.columnOption('Columna11', 'visible', true);
+        e.component.columnOption('Columna12', 'visible', true);
+        e.component.columnOption('NumeroFila', 'visible', false);
+        e.component.columnOption('Estatus', 'visible', false);
+
+
+        var workbook = new ExcelJS.Workbook();
+        var worksheet = workbook.addWorksheet('Data');
+
+        DevExpress.excelExporter.exportDataGrid({
+            component: e.component,
+            worksheet: worksheet,
+            autoFilterEnabled: true
+        }).then(function () {
+            workbook.xlsx.writeBuffer().then(function (buffer) {
+                saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'CargaArchivo.xlsx');
+            });
+        }).then(function () {
+            e.component.columnOption('Columna1', 'visible', false);
+            e.component.columnOption('Columna2', 'visible', false);
+            e.component.columnOption('Columna3', 'visible', false);
+            e.component.columnOption('Columna4', 'visible', false);
+            e.component.columnOption('Columna5', 'visible', false);
+            e.component.columnOption('Columna6', 'visible', false);
+            e.component.columnOption('Columna7', 'visible', false);
+            e.component.columnOption('Columna8', 'visible', false);
+            e.component.columnOption('Columna9', 'visible', false);
+            e.component.columnOption('Columna10', 'visible', false);
+            e.component.columnOption('Columna11', 'visible', false);
+            e.component.columnOption('Columna12', 'visible', false);
+            e.component.columnOption('NumeroFila', 'visible', true);
+            e.component.columnOption('Estatus', 'visible', true);
+            e.component.endUpdate();
+        });
+        e.cancel = true;
+    }
+    function onSelectedFileOpened(args) {
+        //openFileInDialog(args.file);
+    }
+
+          
+  
+</script>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-container">            
+            <div class="notice">
+                Copyright © 2022-2026 Transformatec.<br>
+            </div>
+        </div>
+    </footer>
+    
+    
+    
+
+
+
+
+<script>
+
+
+    $(document).ready(function () {
+
+        if ('' != '') {
+            setLocale('');
+        }
+
+
+        $("#NotificaContainer").ikrNotificationSetup();
+
+        $.ajax({
+            type: "GET",
+            dataType: "json",
+            url: "/Notificaciones/ObtieneNotificaciones",
+            traditional: true,
+            contentType: "application/json;charset=utf-8",
+            success: function (data) {
+                var notifications = data;
+                $("#NotificaContainer").ikrNotificationCount({
+                    NotificationList: notifications,
+                    NotiFromPropName: "UsuarioOrigen",
+                    ListTitlePropName: "Encabezado",
+                    ListBodyPropName: "Cuerpo",
+                    ControllerName: "NotificacionesGeneral",
+                    ActionName: "Index"
+                });
+            },
+            error: function (xhr, status, error) {
+
+            }
+        });
+
+
+    });
+
+
+    function buttonGroup_ItemClick(e) {
+
+        
+        if (e.itemData.hint == 'Sair') {
+            window.location.href = "/Admin/Logout";
+        }
+
+        if (e.itemData.hint == 'Do utilizador') {
+            window.location.href = "/UsuarioData";
+        }
+        
+
+        if (e.itemData.hint == 'Projetos') {
+            const popup = $("#proyectosel-popup").dxPopup("instance");
+            
+            popup.option({
+                contentTemplate: $("#popup-template")                
+            });
+            popup.show();
+        }
+
+        if (e.itemData.hint == "Lenguaje") {
+            const popup = $("#lenguaje-popup").dxPopup("instance");
+
+            popup.option({
+                contentTemplate: $("#lenguaje-template")
+            });
+            popup.show();
+        }
+
+        
+    }
+
+    function lookup_valueChanged(e) {
+                
+        //var data = { IdProyecto: e.value };
+
+        //fetch('api/GlobalProyectoApp', {
+        //    method: 'POST',
+        //    headers: {
+        //        'Accept': 'application/json',
+        //        'Content-Type': 'application/json'
+        //    },
+        //    body: JSON.stringify(data)
+        //})
+        //    .then(response => {
+                
+        //    })
+        //    .then((data) => {
+                
+        //    })
+        //    .catch(error => 
+        //        {
+                
+        //            console.error('Unable to add item.', error)
+        //        });
+
+
+        //$("#tbProyecto").dxTextBox('instance').option('value', e.value);
+        window.location.replace("/Home/ProyectoCambia?iNuevoProyecto=" + e.value);
+
+    }
+
+    var locales = [
+        { name: "English", value: "en" },
+        { name: "Español", value: "es" }
+    ];
+
+    
+
+
+    var locale = getLocale();
+    DevExpress.localization.locale(locale);
+
+    function changeLocale(data) {        
+        setLocale(data.value);
+        
+
+        var data = { sLenguaje: data.value  };
+
+        fetch('api/GlobalApp', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => {
+                
+            })
+            .catch(error => console.error('Unable to add item.', error));
+
+
+        document.location.reload();
+    }
+
+    function getLocale() {
+        var locale = sessionStorage.getItem("locale");        
+        return locale != null ? locale : "es";
+    }
+
+    function setLocale(locale) {
+        sessionStorage.setItem("locale", locale);               
+    }
+
+    function PL2onInit(e) {
+        e.component.getDataSource().load().then(function (data) {
+            e.component.option("value", data[0]); // Set the value with the data's first element
+        });
+    }
+
+    function lookup_displayExprProyecto(item) {
+        if (!item) {
+            return "";
+        }
+        return item.Codigo + " | " + item.Nombre;
+    }
+
+    function getLocale() {
+        var locale = sessionStorage.getItem("locale");
+        return locale != null ? locale : "es";
+    }
+
+    
+    function MenuReady(e) {
+        
+        var knodoPadre = sessionStorage.getItem("nodoPadre");
+        var knodoHijo = sessionStorage.getItem("nodoHijo");
+        //var itemElement = treeViewInstance.element().find("[data-item-id='" + key + "'] > .dx-treeview-item").get(0);
+
+        // expandir el padre
+        // seleccionar el hijo
+
+        if (knodoPadre > 0 )
+        {
+            $("#simple-treeview").dxTreeView("expandItem", knodoPadre);
+            $("#simple-treeview").dxTreeView("selectItem", knodoHijo);
+        }
+        
+
+       
+    }
+
+    function MenuClick(e) {
+        
+        var data = e.itemData;
+        
+        if ((data.IdOpcion != data.IdOpcionPadre) && (data.Ruta != 'abc')) {
+            sessionStorage.setItem("nodoPadre", data.IdOpcionPadre);
+            sessionStorage.setItem("nodoHijo", data.IdOpcion);
+            window.location.replace(data.Ruta);
+        }
+    }
+
+    
+
+</script>
+
+<div id="proyectosel-popup" class="dx-overlay dx-popup dx-widget dx-state-invisible dx-visibility-change-handler"><div class="dx-overlay-content dx-popup-normal" aria-hidden="true" tabindex="0" style="width: 650px; height: 350px;"><div class="dx-popup-content"></div></div></div><script>DevExpress.utils.readyCallbacks.add((function($){$("#proyectosel-popup").dxPopup({"width":650.0,"height":350.0,"showTitle":true,"title":"Projetos associados","dragEnabled":false,"showCloseButton":true});}).bind(this, jQuery));</script>
+
+
+<div id="lenguaje-popup" class="dx-overlay dx-popup dx-widget dx-state-invisible dx-visibility-change-handler"><div class="dx-overlay-content dx-popup-normal" aria-hidden="true" tabindex="0" style="width: 450px; height: 200px;"><div class="dx-popup-content"></div></div></div><script>DevExpress.utils.readyCallbacks.add((function($){$("#lenguaje-popup").dxPopup({"width":450.0,"height":200.0,"showTitle":true,"title":"Lenguaje","dragEnabled":false,"showCloseButton":true});}).bind(this, jQuery));</script>
+
+
+
+
+<script type="text/html" id="lenguaje-template">    <span>
+       <%!function(){%><div id="<%=arguments[0]%>"></div><%DevExpress.aspnet.createComponent("dxLookup",{"dataSource":locales,"displayExpr":"name","valueExpr":"value","placeholder":"Seleccione lenguaje","value":locale,"onValueChanged":changeLocale,"searchEnabled":false},arguments[0])%><%}("LenguajeL1")%>
+    </span>
+</script><script type="text/html" id="simple-treeview-itemTemplate">
+            <div>
+                <div><%- Texto %></div>
+            </div>
+        </script>
+
+
+<script type="text/html" id="popup-template">    <span>
+        <%!function(){%><div id="<%=arguments[0]%>"></div><%DevExpress.aspnet.createComponent("dxLookup",{"dataSource":{"store":DevExpress.data.AspNet.createStore({"loadMode":"raw","key":"IdProyecto","loadUrl":"/ProyectoAction/GetByUserSol"}),"sort":["Codigo"]},"valueExpr":"IdProyecto","displayExpr":lookup_displayExprProyecto,"placeholder":"Selecione o projeto","onValueChanged":lookup_valueChanged,"searchEnabled":true,"searchExpr":["Nombre","Codigo"],"searchPlaceholder":"Procurar"},arguments[0])%><%}("ProyectoL2")%>
+    
+
+
+    </span>
+</script>
+</body></html>
