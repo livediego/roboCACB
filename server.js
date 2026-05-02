@@ -83,15 +83,35 @@ async function uploadPDF(page, empresa) {
 // 🔹 PASSOS 3 A 8 (REUTILIZÁVEL PARA QUALQUER QUESTIONÁRIO)
 // ======================================================
 
+async function obterTotalPaginas(page) {
+
+    console.log('🔎 Indo para a última página para descobrir o total...');
+
+    await page.waitForSelector('.dx-pager', { timeout: 10000 });
+
+    // Ir para a última página
+    await page.locator('.dx-page-last').click();
+    await wait(page, 2000);
+
+    // Ler número da página atual (última)
+    const paginaAtual = await page.locator('.dx-page.dx-selection').innerText();
+    const totalPaginas = parseInt(paginaAtual, 10);
+
+    console.log(`Total de páginas: ${totalPaginas}`);
+
+    return totalPaginas;
+}
+
 async function buscarEmpresaNaGrid(page, nomeEmpresa, maxPaginas = 2) {
 
     console.log('🔎 Procurando empresa a partir da última página...');
 
     await page.waitForSelector('.dx-page-indexes .dx-page', { timeout: 10000 });
     const paginas = page.locator('.dx-page-indexes .dx-page');
-    const total = await paginas.count();
+    const total = obterTotalPaginas(page);
+    const primeiraPagina = Math.max(0, total - maxPaginas) + 1;
 
-    for (let i = total - 1; i >= Math.max(0, total - maxPaginas); i--) {
+    for (let i = total - 1; i >= primeiraPagina; i--) {
 
         await paginas.nth(i).click();
         await wait(page, 2000);
@@ -106,7 +126,7 @@ async function buscarEmpresaNaGrid(page, nomeEmpresa, maxPaginas = 2) {
         }
     }
 
-    throw new Error(`Empresa "${nomeEmpresa}" não encontrada nas últimas ${maxPaginas} páginas.`);
+    throw new Error(`Empresa "${nomeEmpresa}" não encontrada entre as páginas "${primeiraPagina}" e "${total}"`);
 }
 
 async function cadastrarEmpresa(page, empresa) {
