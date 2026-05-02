@@ -83,39 +83,21 @@ async function uploadPDF(page, empresa) {
 // 🔹 PASSOS 3 A 8 (REUTILIZÁVEL PARA QUALQUER QUESTIONÁRIO)
 // ======================================================
 
-async function obterTotalPaginas(page) {
-
-    console.log('🔎 Indo para a última página para descobrir o total...');
-
-    await page.waitForSelector('.dx-pager', { timeout: 10000 });
-
-    // Ir para a última página
-    await page.locator('.dx-page-last').click();
-    await wait(page, 2000);
-
-    // Ler número da página atual (última)
-    const paginaAtual = await page.locator('.dx-page.dx-selection').innerText();
-    const totalPaginas = parseInt(paginaAtual, 10);
-
-    console.log(`Total de páginas: ${totalPaginas}`);
-
-    return totalPaginas;
-}
-
 async function buscarEmpresaNaGrid(page, nomeEmpresa, maxPaginas = 2) {
 
     console.log('🔎 Procurando empresa a partir da última página...');
 
-    await page.waitForSelector('.dx-page-indexes .dx-page', { timeout: 10000 });
-    const paginas = page.locator('.dx-page-indexes .dx-page');
-    const total = obterTotalPaginas(page);
+    //await page.waitForSelector('.dx-page-indexes .dx-page', { timeout: 10000 });
+    //const paginas = page.locator('.dx-page-indexes .dx-page');
+    const lastPage = page.locator('.dx-page-indexes .dx-page').last().innerText();
+    const total = parseInt(lastPage, 10);
     const primeiraPagina = Math.max(0, total - maxPaginas) + 1;
 
     for (let i = total - 1; i >= primeiraPagina; i--) {
 
         await paginas.nth(i).click();
         await wait(page, 2000);
-        
+
         console.log(`Procurando na página página índice ${i}...`);
 
         const linha = page.locator('.dx-data-row', { hasText: nomeEmpresa });
@@ -556,12 +538,12 @@ app.post('/executar', async (req, res) => {
 
             if (!excluir) {
                 console.log('🔎 Procurando empresa na última página...');
-    
+
                 const lastPageButton = page.locator('.dx-page-indexes .dx-page').last();
                 await lastPageButton.click();
                 await wait(page, 2000);
 
-                const linhaEmpresa = page.locator('.dx-data-row', {hasText: empresa.nome_empresa});   
+                const linhaEmpresa = page.locator('.dx-data-row', { hasText: empresa.nome_empresa });
                 await linhaEmpresa.locator('.dx-link-edit').first().click();
                 await wait(page, 2000);
 
@@ -584,13 +566,13 @@ app.post('/executar', async (req, res) => {
                 }
 
                 // Fazer upload do PDF para o questionário
-            
+
                 await linhaEmpresa.locator('.dx-icon-doc').first().click();
                 await wait(page, 2000);
                 await uploadPDF(page, empresa);
             } else {
                 const linhaEmpresa = await buscarEmpresaNaGrid(page, empresa.nome_empresa, 1000);
-   
+
                 await linhaEmpresa.locator('.dx-link-delete').first().click();
                 await page.getByRole('button', { name: 'Sim' }).click();
                 await wait(page, 2000);
@@ -602,7 +584,7 @@ app.post('/executar', async (req, res) => {
         console.log('Automação concluída com sucesso!');
         console.log(`⏲️ Encerramento: ${fim.toLocaleString('pt-BR')} — Tempo gasto: ${formatDuration(durMs)} (${durMs} ms)`);
 
-	//Envia o webhook de sucesso para o Base44
+        //Envia o webhook de sucesso para o Base44
         await fetch(WEBHOOK_BASE44_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -620,8 +602,8 @@ app.post('/executar', async (req, res) => {
         const durMsErr = fimErr - inicio;
         console.error(error);
         console.log(`⏲️ Encerramento (erro): ${fimErr.toLocaleString('pt-BR')} — Tempo gasto: ${formatDuration(durMsErr)} (${durMsErr} ms)`);
-	
-	//Envia o webhook de falha para o Base44
+
+        //Envia o webhook de falha para o Base44
         await fetch(WEBHOOK_BASE44_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
