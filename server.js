@@ -95,7 +95,7 @@ async function buscarEmpresaNaGrid(page, nomeEmpresa, maxPaginas = 2) {
     const primeiraPagina = Math.max(0, total - maxPaginas) + 1;
     console.log("Primeira página:", primeiraPagina);
 
-    for (let i = total; i >= primeiraPagina; i--) {
+    for (let i = primeiraPagina; i <= total; i++) {
 
         await paginas.nth(i).click();
         await wait(page, 2000);
