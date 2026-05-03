@@ -105,10 +105,12 @@ async function buscarEmpresaNaGrid(page, nomeEmpresa, maxPaginas = 2) {
 
         console.log(`🔎 Indo para página ${i}`);
 
-        await page.locator('.dx-page-indexes .dx-page', {
-            hasText: String(i)
-        }).click();
+        const botaoPagina = page
+            .locator('.dx-page-indexes .dx-page')
+            .filter({ hasText: new RegExp(`^${i}$`) });
 
+        await botaoPagina.click();
+        
         await wait(page, 2000);
 
         const linha = page.locator('.dx-data-row', { hasText: nomeEmpresa });
