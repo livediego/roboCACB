@@ -90,7 +90,7 @@ async function buscarEmpresaNaGrid(page, nomeEmpresa, maxPaginas = 2) {
     await page.waitForSelector('.dx-page-indexes .dx-page', { timeout: 10000 });
 
     // Ir para a última página
-    await page.locator('.dx-page-last').click();
+    await page.locator('.dx-page-indexes .dx-page').last();
     await wait(page, 2000);
 
     const totalText = await page.locator('.dx-page.dx-selection').innerText();
