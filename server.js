@@ -88,6 +88,45 @@ async function buscarEmpresaNaGrid(page, nomeEmpresa, maxPaginas = 2) {
     console.log('🔎 Procurando empresa a partir da última página...');
 
     await page.waitForSelector('.dx-page-indexes .dx-page', { timeout: 10000 });
+
+    // Ir para a última página
+    await page.locator('.dx-page-last').click();
+    await wait(page, 2000);
+
+    const totalText = await page.locator('.dx-page.dx-selection').innerText();
+    const total = parseInt(totalText.trim(), 10);
+
+    const primeiraPagina = Math.max(1, total - maxPaginas + 1);
+
+    console.log("Última página:", total);
+    console.log("Primeira página:", primeiraPagina);
+
+    for (let i = total; i >= primeiraPagina; i--) {
+
+        console.log(`🔎 Indo para página ${i}`);
+
+        await page.locator('.dx-page-indexes .dx-page', {
+            hasText: String(i)
+        }).click();
+
+        await wait(page, 2000);
+
+        const linha = page.locator('.dx-data-row', { hasText: nomeEmpresa });
+
+        if (await linha.count()) {
+            console.log(`✅ Empresa encontrada na página ${i}`);
+            return linha;
+        }
+    }
+
+    throw new Error(`Empresa ${nomeEmpresa} não encontrada entre ${primeiraPagina} e ${total}`);
+}
+
+/*async function buscarEmpresaNaGrid(page, nomeEmpresa, maxPaginas = 2) {
+
+    console.log('🔎 Procurando empresa a partir da última página...');
+
+    await page.waitForSelector('.dx-page-indexes .dx-page', { timeout: 10000 });
     const paginas = page.locator('.dx-page-indexes .dx-page');
     const lastPage = await paginas.last().innerText();
     console.log("Última página:", lastPage);
@@ -112,7 +151,7 @@ async function buscarEmpresaNaGrid(page, nomeEmpresa, maxPaginas = 2) {
     }
 
     throw new Error(`Empresa ${nomeEmpresa} não encontrada entre as páginas ${primeiraPagina} e ${total}`);
-}
+}*/
 
 async function cadastrarEmpresa(page, empresa) {
 
