@@ -42,11 +42,21 @@ function formatarDataBR(data) {
 
 async function fazerLogin(page, credenciais) {
     console.log('🔐 Fazendo login...');
-    await page.goto(URL_LOGIN);
-    await page.fill("#UsuarioNombre", credenciais.username);
-    await page.fill("#Contrasenia", credenciais.password);
+
+    await page.goto(URL_LOGIN, { waitUntil: 'domcontentloaded', timeout: 60000 });
+
+    await page.fill('#UsuarioNombre', credenciais.username);
+    await page.fill('#Contrasenia', credenciais.password);
+
     await page.click("button:has-text('Ingresar')");
-    await page.waitForLoadState('networkidle');
+
+    await page.waitForFunction(() => {
+        return !window.location.href.includes('/Admin/Login');
+    }, { timeout: 60000 });
+
+    await page.waitForLoadState('domcontentloaded').catch(() => { });
+
+    console.log('✅ Login concluído');
 }
 
 async function gerarPDF(page, empresa) {
@@ -83,52 +93,261 @@ async function uploadPDF(page, empresa) {
 // 🔹 PASSOS 3 A 8 (REUTILIZÁVEL PARA QUALQUER QUESTIONÁRIO)
 // ======================================================
 
-async function buscarEmpresaNaGrid(page, nomeEmpresa, maxPaginas = 2) {
+function normalizarNomeEmpresa(txt) {
+    return String(txt || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[.,;:]+$/g, '')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .toUpperCase();
+}
 
-    console.log('🔎 Procurando empresa a partir da última página...');
+function nomeValido(nome) {
+    if (!nome) return false;
+    if (nome.length < 3) return false;
+    if (!/[A-Z0-9]/.test(nome)) return false;
+    if (/^[^A-Z0-9]+$/.test(nome)) return false;
+    return true;
+}
+
+async function pesquisarEmpresasNaGrid(page, empresas, questionarioNome) {
+    console.log(`🔎 Pesquisando empresas no questionário ${questionarioNome}...`);
+
+    const empresasNormalizadas = empresas
+        .map(e => ({
+            id_empresa: e.id_empresa || e.id || e.empresa_id,
+            nome_original: e.nome_empresa || e.nome || e.Nombre || e.Nome || '',
+            nome_normalizado: normalizarNomeEmpresa(e.nome_empresa || e.nome || e.Nombre || e.Nome || '')
+        }))
+        .filter(e => nomeValido(e.nome_normalizado));
+
+    const mapaEmpresas = new Map(
+        empresasNormalizadas.map(e => [e.nome_normalizado, e])
+    );
+
+    const encontradas = [];
 
     await page.waitForSelector('.dx-page-indexes .dx-page', { timeout: 10000 });
 
-    // Ir para a última página
-    await page.locator('.dx-page-indexes .dx-page').last().click();
-    await wait(page, 2000);
+    const paginas = page.locator('.dx-page-indexes .dx-page');
+    const lastPageText = await paginas.last().innerText();
+    const totalPaginas = parseInt(lastPageText, 10);
 
-    const totalText = await page.locator('.dx-page.dx-selection').innerText();
-    const total = parseInt(totalText.trim(), 10);
+    console.log(`📄 Total de páginas detectado: ${totalPaginas}`);
 
-    const primeiraPagina = Math.max(1, total - maxPaginas + 1);
+    for (let pagina = 1; pagina <= totalPaginas; pagina++) {
+        console.log(`🔎 Verificando página ${pagina} de ${totalPaginas}...`);
 
-    console.log("Última página:", total);
-    console.log("Primeira página:", primeiraPagina);
+        const botaoPagina = page
+            .locator('.dx-page-indexes .dx-page')
+            .filter({ hasText: new RegExp(`^${pagina}$`) });
 
-    for (let i = total; i >= primeiraPagina; i--) {
-
-        console.log(`🔎 Indo para página ${i}`);
-
-        // Já está na última página, não precisa clicar novamente
-        if (i !== total) {
-
-            const botaoPagina = page
-                .locator('.dx-page-indexes .dx-page')
-                .filter({ hasText: new RegExp(`^${i}$`) });
-
-            await botaoPagina.click();
-
-            await wait(page, 2000);
+        if (!(await botaoPagina.count())) {
+            console.log(`⚠️ Página ${pagina} não visível. Pulando.`);
+            continue;
         }
 
-        const linha = page.locator('.dx-data-row', { hasText: nomeEmpresa });
+        await botaoPagina.first().click();
+        await wait(page, 2000);
 
-        if (await linha.count()) {
-            console.log(`✅ Empresa encontrada na página ${i}`);
-            return linha;
+        const linhas = page.locator('.dx-data-row');
+        const totalLinhas = await linhas.count();
+
+        for (let i = 0; i < totalLinhas; i++) {
+            const linha = linhas.nth(i);
+
+            const celulas = await linha.locator('td').evaluateAll(tds =>
+                tds.map(td => td.innerText.trim()).filter(Boolean)
+            ).catch(() => []);
+
+            const candidatos = celulas
+                .map(normalizarNomeEmpresa)
+                .filter(nomeValido);
+
+            for (const candidato of candidatos) {
+                if (mapaEmpresas.has(candidato)) {
+                    const empresa = mapaEmpresas.get(candidato);
+
+                    console.log(`✅ Encontrada: ${empresa.nome_original} | Questionário: ${questionarioNome}`);
+
+                    encontradas.push({
+                        id_empresa: empresa.id_empresa,
+                        nome_empresa: empresa.nome_original,
+                        nome_normalizado: empresa.nome_normalizado,
+                        questionario: questionarioNome,
+                        pagina,
+                        linha: i + 1
+                    });
+                }
+            }
         }
     }
 
-    throw new Error(`Empresa ${nomeEmpresa} não encontrada entre ${primeiraPagina} e ${total}`);
+    return encontradas;
 }
 
-/*async function buscarEmpresaNaGrid(page, nomeEmpresa, maxPaginas = 2) {
+async function excluirEmpresasDaListaNaGrid(page, nomesEmpresas, maxPaginas = 1000) {
+    console.log('🗑️ Procurando empresas da lista na grid (última → primeira)...');
+
+    const nomesNormalizados = (nomesEmpresas || [])
+        .map(e => typeof e === 'string' ? e : e.nome_empresa || e.nome || e.Nombre || e.Nome || '')
+        .map(normalizarNomeEmpresa)
+        .filter(nomeValido);
+
+    const nomesSet = new Set(nomesNormalizados);
+
+    await page.waitForSelector('.dx-page-indexes .dx-page', { timeout: 10000 });
+
+    await page.waitForSelector('.dx-page-indexes .dx-page', { timeout: 10000 });
+    const paginas = page.locator('.dx-page-indexes .dx-page');
+    const lastPage = await paginas.last().innerText();
+    console.log("Última página:", lastPage);
+    const total = parseInt(lastPage, 10);
+    const primeiraPagina = Math.max(0, total - maxPaginas) + 1;
+    console.log("Primeira página:", primeiraPagina);
+
+    console.log(`📋 Empresas recebidas: ${nomesEmpresas.length}`);
+    console.log(`📋 Empresas válidas: ${nomesNormalizados.length}`);
+    console.log('🔄 Primeiras empresas normalizadas:', nomesNormalizados.slice(0, 10)); Math.max(1, total - maxPaginas + 1);
+
+    console.log('Primeira página (limite):', primeiraPagina);
+    console.log('Última página:', total);
+
+    let totalExcluidas = 0;
+    const excluidas = [];
+
+    for (let pagina = total; pagina >= primeiraPagina; pagina--) {
+        console.log(`\n🔎 Procurando na página ${pagina}...`);
+
+        const botaoPagina = page
+            .locator('.dx-page-indexes .dx-page')
+            .filter({ hasText: new RegExp(`^${pagina}$`) });
+
+        const qtdBotoesPagina = await botaoPagina.count();
+        console.log(`🔢 Botões encontrados para página ${pagina}: ${qtdBotoesPagina}`);
+
+        if (!qtdBotoesPagina) {
+            console.log(`⚠️ Página ${pagina} não visível. Tentando voltar...`);
+
+            const prev = page.locator('.dx-page-prev');
+
+            if (await prev.count()) {
+                await prev.click();
+                await wait(page, 1000);
+                pagina++; // tenta novamente a mesma página
+                continue;
+            }
+
+            console.log('❌ Não foi possível navegar para a página.');
+            continue;
+        }
+
+        await botaoPagina.first().click();
+        await wait(page, 2000);
+
+        const paginaSelecionada = await page
+            .locator('.dx-page.dx-selection')
+            .innerText()
+            .catch(() => 'NÃO IDENTIFICADA');
+
+        console.log(`📍 Página selecionada após clique: ${paginaSelecionada}`);
+
+        const linhas = page.locator('.dx-data-row');
+        const totalLinhas = await linhas.count();
+
+        console.log(`📄 Total de linhas visíveis: ${totalLinhas}`);
+
+        // Amostra das linhas
+        for (let amostra = 0; amostra < Math.min(3, totalLinhas); amostra++) {
+            const linhaAmostra = linhas.nth(amostra);
+            const textoBruto = await linhaAmostra.innerText().catch(() => '');
+            const celulas = await linhaAmostra.locator('td').evaluateAll(tds =>
+                tds.map(td => td.innerText.trim()).filter(Boolean)
+            ).catch(() => []);
+
+            const candidatos = celulas
+                .map(normalizarNomeEmpresa)
+                .filter(nomeValido);
+
+            console.log(`🧪 Amostra linha ${amostra + 1}:`);
+            console.log(`   Texto bruto: ${JSON.stringify(textoBruto)}`);
+            console.log(`   Células: ${JSON.stringify(celulas)}`);
+            console.log(`   Candidatos: ${JSON.stringify(candidatos)}`);
+            const totalLinhasAtualizadas = await linhas.count();
+
+            let encontrou = null;
+
+            for (let i = 0; i < totalLinhasAtualizadas; i++) {
+                const linha = linhas.nth(i);
+
+                const textoLinha = await linha.innerText().catch(() => '');
+                const celulas = await linha.locator('td').evaluateAll(tds =>
+                    tds.map(td => td.innerText.trim()).filter(Boolean)
+                ).catch(() => []);
+
+                const candidatos = celulas
+                    .map(normalizarNomeEmpresa)
+                    .filter(nomeValido);
+
+                const nomeEncontrado = candidatos.find(candidato =>
+                    nomesSet.has(candidato)
+                );
+
+                if (nomeEncontrado) {
+                    encontrou = {
+                        nome: nomeEncontrado,
+                        textoLinha,
+                        rowIndex: i
+                    };
+                    break;
+                }
+            }
+
+            if (!encontrou) {
+                console.log('ℹ️ Nenhuma empresa da lista nesta página.');
+                continue;
+            }
+
+            console.log(`✅ Empresa encontrada: "${encontrou.nome}"`);
+            console.log(`📎 Texto: ${JSON.stringify(encontrou.textoLinha)}`);
+
+            const linhaParaDeletar = page.locator('.dx-data-row').nth(encontrou.rowIndex);
+
+            await linhaParaDeletar.locator('.dx-link-delete').first().click();
+            await wait(page, 1000);
+
+            const botaoConfirmar = page
+                .locator('.dx-dialog-button, .dx-button')
+                .filter({ hasText: /^(Sim|Sí|Si|Yes|OK|Aceptar|Aceitar)$/i })
+                .first();
+
+            if (!(await botaoConfirmar.count())) {
+                throw new Error(`Confirmação não encontrada: ${encontrou.nome}`);
+            }
+
+            await botaoConfirmar.click();
+            await wait(page, 2500);
+
+            totalExcluidas++;
+            excluidas.push(encontrou.nome);
+
+            console.log(`🗑️ Excluída: "${encontrou.nome}"`);
+
+            // Since we deleted one, stay on the same page to delete more if any
+            pagina++;
+        }
+
+        console.log(`✅ Total excluídas: ${totalExcluidas}`);
+
+        return {
+            totalExcluidas,
+            excluidas
+        };
+    }
+}
+
+async function buscarEmpresaNaGrid(page, nomeEmpresa, maxPaginas = 2) {
 
     console.log('🔎 Procurando empresa a partir da última página...');
 
@@ -157,7 +376,7 @@ async function buscarEmpresaNaGrid(page, nomeEmpresa, maxPaginas = 2) {
     }
 
     throw new Error(`Empresa ${nomeEmpresa} não encontrada entre as páginas ${primeiraPagina} e ${total}`);
-}*/
+}
 
 async function cadastrarEmpresa(page, empresa) {
 
@@ -506,7 +725,7 @@ async function preencherQuestionario14(page, empresa) {
 }
 
 // ======================================================
-// 🔹 ENDPOINT PRINCIPAL
+// 🔹 ENDPOINTS
 // ======================================================
 
 app.post('/executar', async (req, res) => {
@@ -666,6 +885,235 @@ app.post('/executar', async (req, res) => {
 
     } finally {
         if (browser) await browser.close();
+    }
+});
+
+app.post('/pesquisar-empresas-questionarios', async (req, res) => {
+    let browser;
+    const inicio = new Date();
+
+    try {
+        const { credenciais, isProd, empresas, questionarios } = req.body;
+
+        if (!credenciais?.username || !credenciais?.password) {
+            return res.status(400).json({
+                success: false,
+                error: 'Credenciais obrigatórias.'
+            });
+        }
+
+        if (!Array.isArray(empresas) || empresas.length === 0) {
+            return res.status(400).json({
+                success: false,
+                error: 'Lista de empresas obrigatória.'
+            });
+        }
+
+        if (!Array.isArray(questionarios) || questionarios.length === 0) {
+            return res.status(400).json({
+                success: false,
+                error: 'Lista de questionários obrigatória.'
+            });
+        }
+
+        browser = await chromium.launch({
+            headless: isProd !== false,
+            args: ['--no-sandbox', '--disable-setuid-sandbox']
+        });
+
+        const context = await browser.newContext();
+        const page = await context.newPage();
+
+        await fazerLogin(page, credenciais);
+
+        const resultadoMap = new Map();
+
+        for (const empresa of empresas) {
+            const idEmpresa = empresa.id_empresa || empresa.id || empresa.empresa_id;
+            const nomeEmpresa = empresa.nome_empresa || empresa.nome || empresa.Nombre || empresa.Nome || '';
+
+            resultadoMap.set(String(idEmpresa), {
+                id_empresa: idEmpresa,
+                nome_empresa: nomeEmpresa,
+                questionarios_encontrados: []
+            });
+        }
+
+        for (const questionario of questionarios) {
+            if (!questionario.url) {
+                throw new Error(`Questionário sem URL: ${questionario.nome || 'sem nome'}`);
+            }
+
+            console.log('----------------------------------------');
+            console.log(`📋 Pesquisando questionário: ${questionario.nome}`);
+            console.log(`URL: ${questionario.url}`);
+
+            await page.goto(questionario.url, { waitUntil: 'domcontentloaded', timeout: 60000 });
+            await wait(page, 3000);
+
+            const encontradas = await pesquisarEmpresasNaGrid(
+                page,
+                empresas,
+                questionario.nome
+            );
+
+            for (const item of encontradas) {
+                const chave = String(item.id_empresa);
+
+                if (!resultadoMap.has(chave)) {
+                    resultadoMap.set(chave, {
+                        id_empresa: item.id_empresa,
+                        nome_empresa: item.nome_empresa,
+                        questionarios_encontrados: []
+                    });
+                }
+
+                const registro = resultadoMap.get(chave);
+
+                const jaExiste = registro.questionarios_encontrados.some(q =>
+                    q.nome === item.questionario
+                );
+
+                if (!jaExiste) {
+                    registro.questionarios_encontrados.push({
+                        nome: item.questionario,
+                        pagina: item.pagina,
+                        linha: item.linha
+                    });
+                }
+            }
+        }
+
+        const resultado = Array.from(resultadoMap.values());
+
+        const fim = new Date();
+        const duracaoMs = fim - inicio;
+
+        return res.json({
+            success: true,
+            message: 'Pesquisa concluída.',
+            duracao_ms: duracaoMs,
+            resultado
+        });
+
+    } catch (error) {
+        console.error('❌ Erro na pesquisa:', error);
+
+        return res.status(500).json({
+            success: false,
+            error: error.message
+        });
+
+    } finally {
+        if (browser) {
+            await browser.close();
+        }
+    }
+});
+
+app.post('/excluir-lote', async (req, res) => {
+    let browser;
+    const inicio = new Date();
+
+    function formatDuration(ms) {
+        const s = Math.floor(ms / 1000);
+        const msRem = ms % 1000;
+        const hh = Math.floor(s / 3600);
+        const mm = Math.floor((s % 3600) / 60);
+        const ss = s % 60;
+        return `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')}.${String(msRem).padStart(3, '0')}`;
+    }
+
+    try {
+        const { credenciais, isProd, empresas, questionarios } = req.body;
+
+        if (!credenciais?.username || !credenciais?.password) {
+            return res.status(400).json({
+                success: false,
+                error: 'Credenciais obrigatórias.'
+            });
+        }
+
+        if (!Array.isArray(empresas) || empresas.length === 0) {
+            return res.status(400).json({
+                success: false,
+                error: 'Lista de empresas obrigatória.'
+            });
+        }
+
+        if (!Array.isArray(questionarios) || questionarios.length === 0) {
+            return res.status(400).json({
+                success: false,
+                error: 'Lista de questionários obrigatória.'
+            });
+        }
+
+        console.log('🗑️ Iniciando robô de exclusão em lote...');
+        console.log(`Empresas recebidas: ${empresas.length}`);
+
+        browser = await chromium.launch({
+            headless: isProd,
+            args: ['--no-sandbox', '--disable-setuid-sandbox']
+        });
+
+        const context = await browser.newContext();
+        const page = await context.newPage();
+
+        await fazerLogin(page, credenciais);
+
+        const resultadoGeral = [];
+
+        for (const questionario of questionarios) {
+            if (!questionario.url) {
+                throw new Error(`Questionário sem URL: ${questionario.nome || 'sem nome'}`);
+            }
+
+            console.log('----------------------------------------');
+            console.log(`🗑️ Processando questionário: ${questionario.nome}`);
+            console.log(`URL: ${questionario.url}`);
+
+            await page.goto(questionario.url);
+            await page.waitForLoadState('networkidle');
+            await wait(page, 2000);
+
+            const resultado = await excluirEmpresasDaListaNaGrid(page, empresas);
+
+            resultadoGeral.push({
+                questionario: questionario.nome,
+                url: questionario.url,
+                ...resultado
+            });
+        }
+
+        const fim = new Date();
+        const durMs = fim - inicio;
+
+        console.log(`✅ Exclusão em lote concluída em ${formatDuration(durMs)}`);
+
+        return res.json({
+            success: true,
+            message: 'Exclusão em lote concluída.',
+            duracao_ms: durMs,
+            resultado: resultadoGeral
+        });
+
+    } catch (error) {
+        const fimErr = new Date();
+        const durMsErr = fimErr - inicio;
+
+        console.error('❌ Erro na exclusão em lote:', error);
+        console.log(`⏲️ Encerramento com erro: ${formatDuration(durMsErr)}`);
+
+        return res.status(500).json({
+            success: false,
+            error: error.message,
+            duracao_ms: durMsErr
+        });
+
+    } finally {
+        if (browser) {
+            await browser.close();
+        }
     }
 });
 
