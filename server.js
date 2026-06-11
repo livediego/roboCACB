@@ -198,8 +198,6 @@ async function excluirEmpresasDaListaNaGrid(page, nomesEmpresas, maxPaginas = 10
     const nomesSet = new Set(nomesNormalizados);
 
     await page.waitForSelector('.dx-page-indexes .dx-page', { timeout: 10000 });
-
-    await page.waitForSelector('.dx-page-indexes .dx-page', { timeout: 10000 });
     const paginas = page.locator('.dx-page-indexes .dx-page');
     const lastPage = await paginas.last().innerText();
     console.log("Última página:", lastPage);
