@@ -1,0 +1,6 @@
+[0504/032830.126:ERROR:net\proxy_resolution\win\proxy_config_service_win.cc:160] WinHttpGetIEProxyConfigForCurrentUser failed: 2
+[0504/032830.126:ERROR:net\proxy_resolution\win\proxy_config_service_win.cc:160] WinHttpGetIEProxyConfigForCurrentUser failed: 2
+[0504/032830.165:WARNING:net\dns\dns_config_service.cc:144] Failed to read DnsHosts.
+[0504/032830.247:WARNING:net\dns\dns_config_service_win.cc:609] Failed to read DnsConfig.
+[0504/032830.288:ERROR:content\browser\gpu\gpu_process_host.cc:993] GPU process launch failed: error_code=63
+[0504/032830.288:WARNING:content\browser\gpu\gpu_process_host.cc:1441] The GPU process has crashed 1 time(s)
