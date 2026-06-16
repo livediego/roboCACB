@@ -7,7 +7,7 @@ const URL_LOGIN = 'https://www.alinvestverde-c1-monitoreo.com/Admin/Login?Return
 const URL = 'https://www.alinvestverde-c1-monitoreo.com/Ficha11OE?IdProyectoIndicadorML=291';
 const USERNAME = 'Gabriele.Oliveira CACB';
 const PASSWORD = '1234567';
-const START_PAGE = 78; // Configura a página inicial (1 para começar do início)
+const START_PAGE = 187; // Configura a página inicial (1 para começar do início)
 
 const wait = (page, ms = 500) => page.waitForTimeout(ms);
 
