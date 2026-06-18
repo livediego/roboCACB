@@ -9,7 +9,7 @@ const URL_LOGIN = 'https://www.alinvestverde-c1-monitoreo.com/Admin/Login?Return
 const URL = 'https://www.alinvestverde-c1-monitoreo.com/Ficha11OE?IdProyectoIndicadorML=291';
 const USERNAME = 'Gabriele.Oliveira CACB';
 const PASSWORD = '1234567';
-const START_PAGE = 243; 
+const START_PAGE = 249;
 
 const wait = (page, ms = 500) => page.waitForTimeout(ms);
 
@@ -43,7 +43,7 @@ const clearOverlays = async (page) => {
 // 🔹 CÓDIGO PRINCIPAL
 // ======================================================
 (async () => {
-  const browser = await chromium.launch({ headless: false, args: ['--start-maximized'] }); 
+  const browser = await chromium.launch({ headless: false, args: ['--start-maximized'] });
   const context = await browser.newContext();
   const page = await context.newPage();
 
@@ -56,172 +56,259 @@ const clearOverlays = async (page) => {
     await page.waitForLoadState('networkidle').catch(() => { });
     await wait(page, 2000);
 
-    let pageNumber = 1;
-    
-    if (START_PAGE > 1) {
-      console.log('Avançando rapidamente para a página: ' + START_PAGE + '...');
-      while (pageNumber < START_PAGE) {
-        await page.waitForSelector('.dx-datagrid-table', { state: 'visible', timeout: 30000 });
-        
-        const bestPageToClick = await page.evaluate((target) => {
-          const pages = Array.from(document.querySelectorAll('.dx-page'))
-            .map(p => ({ el: p, num: parseInt(p.innerText) }))
-            .filter(p => !isNaN(p.num) && p.num <= target)
-            .sort((a, b) => b.num - a.num);
-          if (pages.length > 0) {
-            const currentPage = parseInt(document.querySelector('.dx-selection.dx-page')?.innerText || '1');
-            if (pages[0].num > currentPage) {
-              pages[0].el.click();
-              return pages[0].num;
-            }
-          }
-          return null;
-        }, START_PAGE);
+    await page.waitForSelector('.dx-page', {
+      timeout: 30000
+    });
 
-        if (bestPageToClick) {
-          pageNumber = bestPageToClick;
-          console.log('Saltou para a página ' + pageNumber + '...');
-          await page.waitForTimeout(1500);
-        } else {
-          const nextBtn = await page.$('.dx-navigate-button.dx-next-button:not(.dx-button-disable)');
-          if (nextBtn) {
-            await nextBtn.click({ force: true });
-            await page.waitForTimeout(1500);
-            const activePageText = await page.evaluate(() => document.querySelector('.dx-selection.dx-page')?.innerText);
-            pageNumber = parseInt(activePageText || (pageNumber + 1));
-            console.log('Avançou via seta para a página ' + pageNumber + '...');
-          } else {
-            break;
-          }
-        }
-      }
-    }
+    // Vai para a última página visível
+    const lastPage = await page.evaluate(() => {
+      const pages = Array.from(document.querySelectorAll('.dx-page'))
+        .map(p => parseInt(p.innerText))
+        .filter(n => !isNaN(n));
+
+      return Math.max(...pages);
+    });
+
+    console.log('Última página visível: ' + lastPage);
+
+    await page.evaluate((target) => {
+      const pageBtn = Array.from(
+        document.querySelectorAll('.dx-page')
+      ).find(
+        p => parseInt(p.innerText) === target
+      );
+
+      if (pageBtn) pageBtn.click();
+    }, lastPage);
+
+    await page.waitForLoadState('networkidle').catch(() => { });
+    await page.waitForTimeout(3000);
+
+    let pageNumber = await page.evaluate(() =>
+      parseInt(
+        document.querySelector('.dx-selection.dx-page')?.innerText || '1'
+      )
+    );
+
+    console.log('Página inicial: ' + pageNumber);
 
     let hasMorePages = true;
 
     while (hasMorePages) {
-      console.log('\n--- Processando Página ' + pageNumber + ' ---');
-      
-      await page.waitForSelector('.dx-datagrid-table', { state: 'visible', timeout: 30000 });
-      await page.waitForTimeout(2000); 
-      
-      const rowsCount = (await page.$$('.dx-datagrid-rowsview .dx-data-row')).length;
 
-      for (let i = 0; i < rowsCount; i++) {
-        const currentRows = await page.$$('.dx-datagrid-rowsview .dx-data-row');
-        const row = currentRows[i];
-        if (!row) continue;
+      console.log(`\n--- Processando Página ${pageNumber} ---`);
+
+      await page.waitForSelector(
+        '.dx-datagrid-table',
+        { state: 'visible', timeout: 30000 }
+      );
+
+      await page.waitForTimeout(2000);
+
+      let rows = await page.$$('.dx-datagrid-rowsview .dx-data-row');
+
+      for (let i = rows.length - 1; i >= 0; i--) {
+
+        rows = await page.$$('.dx-datagrid-rowsview .dx-data-row');
+
+        if (!rows[i]) continue;
+
+        const row = rows[i];
 
         try {
-          const beneficiaryCell = await row.$('td:nth-child(2)');
+
+          const beneficiaryCell =
+            await row.$('td:nth-child(2)');
+
           if (!beneficiaryCell) continue;
-          const beneficiary = await beneficiaryCell.innerText();
-          
-          const dateCell = await row.$('td:nth-child(4)');
+
+          const beneficiary =
+            (await beneficiaryCell.innerText()).trim();
+
+          const dateCell =
+            await row.$('td:nth-child(4)');
+
           if (!dateCell) continue;
-          const dateText = (await dateCell.innerText()).trim();
 
-          const reviewBtn = await row.$('a[title="Solicitar revisão"], a[hint="Solicitar revisão"]');
-          
-          if (dateText === '' && reviewBtn) {
-            console.log('Empresa Pendente: ' + beneficiary);
-            
-            const fileBtn = await row.$('a[title="Arquivo"], a[hint="Arquivo"]');
-            if (fileBtn) {
-              await fileBtn.scrollIntoViewIfNeeded();
-              await fileBtn.click({ force: true });
-              
-              try {
-                console.log('- Aguardando modal de arquivos...');
-                // Espera o modal ficar visível de fato
-                await page.waitForFunction(() => {
-                  const modals = Array.from(document.querySelectorAll('.dx-popup-content'));
-                  return modals.some(m => m.getBoundingClientRect().height > 10);
-                }, { timeout: 15000 });
+          const dateText =
+            (await dateCell.innerText()).trim();
 
-                await page.waitForTimeout(2000);
+          const reviewBtn =
+            await row.$(
+              'a[title="Solicitar revisão"], a[hint="Solicitar revisão"]'
+            );
 
-                const fileCount = await page.evaluate(() => {
-                  const modals = Array.from(document.querySelectorAll('.dx-popup-content'));
-                  const activeModal = modals.find(m => m.getBoundingClientRect().height > 10);
-                  if (!activeModal) return 0;
-                  
-                  const listItems = activeModal.querySelectorAll('.dx-list-item');
-                  if (listItems.length > 0) return listItems.length;
-                  
-                  const gridRows = activeModal.querySelectorAll('.dx-datagrid-rowsview .dx-data-row');
-                  if (gridRows.length > 0) return gridRows.length;
+          if (dateText !== '' || !reviewBtn)
+            continue;
 
-                  return activeModal.querySelectorAll('a').length;
-                });
+          console.log('Empresa Pendente: ' + beneficiary);
 
-                console.log('- Arquivos encontrados: ' + fileCount);
+          const fileBtn =
+            await row.$(
+              'a[title="Arquivo"], a[hint="Arquivo"]'
+            );
 
-                // Fechar o modal
-                await page.evaluate(() => {
-                  const modals = Array.from(document.querySelectorAll('.dx-overlay-wrapper'));
-                  const activeWrapper = modals.find(m => m.getBoundingClientRect().height > 10);
-                  if (activeWrapper) {
-                    const closeBtn = activeWrapper.querySelector('.dx-closebutton, .dx-icon-close');
-                    if (closeBtn) {
-                      const actualBtn = closeBtn.closest('.dx-button') || closeBtn;
-                      actualBtn.click();
-                    }
-                  }
-                });
-                
-                // Espera o modal sumir completamente
-                await page.waitForFunction(() => {
-                  const overlays = Array.from(document.querySelectorAll('.dx-overlay-wrapper, .dx-overlay-shader'));
-                  return overlays.every(o => o.getBoundingClientRect().height < 5);
-                }, { timeout: 8000 }).catch(() => {});
-                
-                await page.waitForTimeout(1500);
+          if (!fileBtn)
+            continue;
 
-                if (fileCount === 1) {
-                  console.log('>>> SOLICITANDO REVISÃO para ' + beneficiary + '...');
-                  const freshReviewBtn = await page.locator('.dx-data-row', { hasText: beneficiary })
-                    .locator('a[title="Solicitar revisão"], a[hint="Solicitar revisão"]')
-                    .first();
-                  
-                  if (await freshReviewBtn.isVisible()) {
-                    await freshReviewBtn.click({ force: true });
-                    await page.waitForTimeout(2000);
-                  }
-                } else {
-                  console.log('- Pulado: Requisito de exatamente 1 arquivo não atendido (Encontrados: ' + fileCount + ').');
-                }
+          await fileBtn.scrollIntoViewIfNeeded();
+          await fileBtn.click({ force: true });
 
-              } catch (modalError) {
-                console.log('⚠️ Erro no modal para ' + beneficiary + ': ' + modalError.message);
-                await page.keyboard.press('Escape'); 
-                await page.waitForTimeout(2000);
-              }
-            }
-          }
-        } catch (rowError) {
-          console.log('⚠️ Erro ao processar linha ' + (i + 1) + ': ' + rowError.message);
-          continue;
+          await page.waitForFunction(() => {
+            const modals =
+              Array.from(
+                document.querySelectorAll('.dx-popup-content')
+              );
+
+            return modals.some(
+              m => m.getBoundingClientRect().height > 10
+            );
+          }, { timeout: 15000 });
+
+          await page.waitForTimeout(2000);
+
+          const fileCount =
+            await page.evaluate(() => {
+
+              const modals =
+                Array.from(
+                  document.querySelectorAll('.dx-popup-content')
+                );
+
+              const activeModal =
+                modals.find(
+                  m => m.getBoundingClientRect().height > 10
+                );
+
+              if (!activeModal)
+                return 0;
+
+              const listItems =
+                activeModal.querySelectorAll('.dx-list-item');
+
+              if (listItems.length)
+                return listItems.length;
+
+              const gridRows =
+                activeModal.querySelectorAll(
+                  '.dx-datagrid-rowsview .dx-data-row'
+                );
+
+              if (gridRows.length)
+                return gridRows.length;
+
+              return activeModal.querySelectorAll('a').length;
+            });
+
+          console.log(
+            'Arquivos encontrados: ' + fileCount
+          );
+
+          await page.keyboard.press('Escape');
+          await page.waitForTimeout(1500);
+
+          if (fileCount !== 1)
+            continue;
+
+          const freshReviewBtn =
+            page.locator(
+              '.dx-data-row',
+              { hasText: beneficiary }
+            )
+              .locator(
+                'a[title="Solicitar revisão"], a[hint="Solicitar revisão"]'
+              )
+              .first();
+
+          if (!(await freshReviewBtn.count()))
+            continue;
+
+          console.log(
+            '>>> SOLICITANDO REVISÃO: ' + beneficiary
+          );
+
+          await freshReviewBtn.click({
+            force: true
+          });
+
+          await page.waitForLoadState(
+            'networkidle'
+          ).catch(() => { });
+
+          await page.waitForFunction(() => {
+
+            const loading =
+              document.querySelector(
+                '.dx-loadpanel-content'
+              );
+
+            if (!loading)
+              return true;
+
+            return loading.offsetParent === null;
+
+          }, {
+            timeout: 30000
+          }).catch(() => { });
+
+          await page.waitForTimeout(4000);
+
+        } catch (err) {
+
+          console.log(
+            'Erro: ' + err.message
+          );
+
         }
       }
 
-      const nextLink = await page.$('.dx-page:has-text("' + (pageNumber + 1) + '")');
-      if (nextLink) {
-        await nextLink.click({ force: true });
-        pageNumber++;
-        await page.waitForTimeout(3000);
-      } else {
-        const nextBtn = await page.$('.dx-navigate-button.dx-next-button:not(.dx-button-disable)');
-        if (nextBtn) {
-           await nextBtn.click({ force: true });
-           await page.waitForTimeout(2000);
-           const activePageText = await page.evaluate(() => document.querySelector('.dx-selection.dx-page')?.innerText);
-           pageNumber = parseInt(activePageText || (pageNumber + 1));
-           await page.waitForTimeout(1000);
-        } else {
-           hasMorePages = false;
-        }
+      if (pageNumber <= 1) {
+
+        console.log('🏁 Primeira página alcançada.');
+        hasMorePages = false;
+        break;
+
       }
+
+      const targetPage = pageNumber - 1;
+
+      console.log(`⬅ Indo para página ${targetPage}`);
+
+      const changed = await page.evaluate((target) => {
+
+        const pages = Array.from(
+          document.querySelectorAll('.dx-page')
+        );
+
+        const btn = pages.find(
+          p => parseInt(p.innerText) === target
+        );
+
+        if (!btn) return false;
+
+        btn.click();
+
+        return true;
+
+      }, targetPage);
+
+      if (!changed) {
+
+        console.log(
+          `⚠ Página ${targetPage} não está visível na paginação`
+        );
+
+        hasMorePages = false;
+        break;
+
+      }
+
+      await page.waitForLoadState('networkidle').catch(() => { });
+      await page.waitForTimeout(3000);
+
+      pageNumber = targetPage;
+
+      console.log(`✅ Agora na página ${pageNumber}`);
     }
 
     console.log('\nProcesso finalizado com sucesso.');
